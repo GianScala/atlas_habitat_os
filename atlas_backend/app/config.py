@@ -24,16 +24,20 @@ class Settings(BaseSettings):
 
     # --- Data source: which adapter connects ATLAS to the habitat ---------
 
-    # grafana  reach the habitat InfluxDB through Grafana's proxy (default).
-    # influxdb talk to InfluxDB 1.x directly over its HTTP query API.
     # sqlite   read a local SQLite file in ATLAS's canonical readings schema.
     # sql      map onto an existing SQL database (Postgres/MySQL/Timescale/...).
+    # influxdb talk to InfluxDB 1.x directly over its HTTP query API.
+    # grafana  reach a habitat InfluxDB through Grafana's proxy.
+    #
+    # No adapter is privileged. The default is sqlite because it is the only one
+    # that can work with nothing configured: an unset DATA_SOURCE lands on the
+    # bundled demo rather than on a network adapter with no host to talk to.
     #
     # Adding an adapter is a class in app/datasource/ and a line in its
     # ADAPTERS map; nothing in the core telemetry logic changes.
     data_source: str = Field(
-        default="grafana",
-        description="grafana | influxdb | sqlite | sql. The habitat backend.",
+        default="sqlite",
+        description="sqlite | sql | influxdb | grafana. The habitat backend.",
     )
 
     # --- Grafana adapter: reach InfluxDB through Grafana --------------------
@@ -258,7 +262,7 @@ class Settings(BaseSettings):
         Transport-agnostic: the health endpoint and startup log ask this
         rather than naming Grafana, so a different adapter reports correctly.
         """
-        which = (self.data_source or "grafana").strip().lower()
+        which = (self.data_source or "sqlite").strip().lower()
         if which == "influxdb":
             return bool(self.influx_base and self.influx_db)
         if which == "sqlite":
@@ -270,7 +274,7 @@ class Settings(BaseSettings):
     @property
     def datasource_summary(self) -> str:
         """One line naming where the habitat data comes from, for logs."""
-        which = (self.data_source or "grafana").strip().lower()
+        which = (self.data_source or "sqlite").strip().lower()
         if which == "influxdb":
             base = self.influx_base or "(unset)"
             return f"influxdb -> {base} db={self.influx_db or '(unset)'}"

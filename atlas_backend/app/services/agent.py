@@ -1,20 +1,20 @@
 """The agent loop: question in, streamed answer out.
 
 One turn is a cycle. The model reads the question, decides which queries to
-run, the queries run against real InfluxDB data through the tool registry, and
-the model answers from what came back. It may go round several times; the loop
-stops when the model returns text with no further tool calls.
+run, the queries run against the habitat database through the tool registry,
+and the model answers from what came back. It may go round several times; the
+loop stops when the model returns text with no further tool calls.
 
-Everything is yielded as it happens — thinking, text tokens, each query and
-its outcome — so the interface can show the work rather than a spinner.
+Everything is yielded as it happens - thinking, text tokens, each query and
+its outcome - so the interface can show the work rather than a spinner.
 
 The loop does not know which model it is driving. A provider (see `app/llm/`)
 takes the thread and the tools and streams a turn back, whether the weights
 are on this machine or in Anthropic's data centre; the shape of the work is
 the same either way, and so is this file.
 
-This module is a synchronous generator on purpose. Both providers and the
-Grafana transport are blocking, and Starlette runs a sync stream in its
+This module is a synchronous generator on purpose. Both providers and every
+data-source adapter are blocking, and Starlette runs a sync stream in its
 threadpool, so this stays simple and correct without an async rewrite.
 """
 

@@ -5,9 +5,10 @@ The second of the two tools that do not touch the habitat's database. Where
 the numbers somebody wrote down off a dial on a wall.
 
 WHY THIS IS A SEPARATE TOOL AND NOT MORE TELEMETRY. Everything else ATLAS can
-reach comes from one place: sensors reporting into InfluxDB, read through
-Grafana. This comes from a clipboard. The two accounts overlap — both of them
-measure the habitat's water and power — and they are deliberately never merged,
+reach comes from one place: the habitat's instruments, read through whichever
+data-source adapter is configured. This comes from a clipboard. The two
+accounts overlap - both of them measure the habitat's water and power - and
+they are deliberately never merged,
 because the whole value of a second account is that it was taken independently.
 A sum of sub-meters that comes in 12% under the mains meter is a finding, and
 it is only visible while the two remain two.

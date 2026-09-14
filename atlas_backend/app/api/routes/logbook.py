@@ -6,7 +6,7 @@ because it shares no arithmetic with the plan whatsoever: the plan is about
 ceilings nobody measured, and this is about dials somebody read.
 
 No habitat database is touched by anything here. That is the point — the log is
-the independent account the Grafana figures get checked against, and it stays
+the independent account the telemetry figures get checked against, and it stays
 available on exactly the day the telemetry does not.
 """
 

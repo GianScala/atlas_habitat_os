@@ -1,9 +1,12 @@
 /**
- * The InfluxQL behind an answer.
+ * The queries behind an answer.
  *
  * Separate from the trace on purpose: the trace is the narrative of what was
- * tried, this is the citation. Anyone doubting a number can copy a line from
- * here into Grafana and get the same result.
+ * tried, this is the citation. Each line is the query the active adapter
+ * actually ran, in that adapter's own dialect, so anyone doubting a number can
+ * run it against the habitat database and get the same result. The dialect is
+ * not named here: it depends on which adapter is configured, and the query
+ * text shows it plainly.
  */
 
 import { ChevronRight } from '@/icons'
@@ -22,7 +25,7 @@ export function SourceFooter({ queries }: SourceFooterProps) {
       <summary className="panel__summary">
         <ChevronRight className="panel__chevron" />
         <span className="panel__label">
-          Source: {queries.length} InfluxQL {noun}
+          Source: {queries.length} {noun}
         </span>
         <span className="panel__hint">verifiable</span>
       </summary>

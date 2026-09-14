@@ -23,11 +23,12 @@ time-series, which any store (SQLite, Postgres, a CSV import) can be mapped to:
 `location` is reported under the habitat profile's first location tag key (e.g.
 "Location"), so discovery, zone naming, and per-place queries all work exactly
 as they do on InfluxDB. Aggregation is done in-process after fetching the
-matching rows — correct and simple at the local scale this adapter is for.
+matching rows - correct and simple at the local scale this adapter is for.
 
-Advanced analyses expressed as raw InfluxQL (tank-flow, the charting
-time-series) are not offered on this adapter; the tool registry gates them on
-the `raw_influxql` capability, which this adapter does not advertise.
+Every telemetry tool works here, tank-flow and the charting time-series
+included: they are all built on the structured `Query` level. What this adapter
+does not advertise is `raw_influxql`, which only the InfluxQL diagnostic scripts
+ask for.
 """
 
 import sqlite3

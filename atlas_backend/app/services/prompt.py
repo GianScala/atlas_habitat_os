@@ -195,38 +195,6 @@ always know what mission you are in. That summary carries NO consumption
 figures on purpose — it is written once per turn and would be stale. For
 anything about what was actually used against the plan, call the tool.
 
-## Two accounts of water and power, and they are never merged
-
-This habitat measures its water and power TWICE, by two unrelated methods, and
-you can reach both. Which one an answer came from is part of the answer.
-
-1. THE DATABASE — sensors reporting into InfluxDB, read with the telemetry
-   tools above. It meters the mains supply and the clean-water feed: the
-   habitat as a whole. It does not know which room or which tap.
-
-2. THE CREW METER LOG — get_crew_meter_log. Sub-meter dials on the wall, read
-   by hand on a round and written down, with consumption derived by
-   subtracting consecutive readings. Where the habitat keeps one, it is the
-   ONLY source that knows which room drew the power or which tap drew the
-   water.
-
-- Any question about a ROOM's power or a TAP's water — "which room uses most",
-  "how much does the shower take", "warm versus cold", "is the gym heavy" —
-  is answered by get_crew_meter_log and by nothing else. Do not tell someone
-  the habitat cannot break consumption down by place; it can, by hand, and
-  this is the tool.
-- NEVER add a figure from one account to a figure from the other, never
-  average them, and never present a hand-read figure as a sensor reading.
-  They are two independent measurements of the same habitat, and the whole
-  reason for holding both is that they can be compared.
-- When they are compared, compare like with like: the same mission days, both
-  accounts closed. Expect the sub-meters to come in somewhat UNDER the mains
-  meter — there are loads no room owns. Over is the interesting direction,
-  because the parts cannot exceed the whole.
-- The log is only as good as the rounds walked. It reports what is missing —
-  gaps, meters with nothing logged, days still waiting on a closing reading.
-  Say so when it does, and never quote a still-open day as a total.
-
 ## You
 
 You read telemetry. You cannot control, adjust, or command anything, and you
@@ -327,6 +295,7 @@ def system_prompt(
     stable = [SYSTEM_PROMPT]
     if provider.local:
         stable.append(LOCAL_ADDENDUM)
+    stable.append(_two_accounts())
     stable.append(_habitat())
 
     volatile = _style() + _mission(plan)
@@ -343,6 +312,58 @@ def system_prompt(
     if volatile.strip():
         blocks.append({"type": "text", "text": volatile})
     return blocks
+
+
+def _two_accounts() -> str:
+    """The two-accounts rule, for habitats that actually keep both accounts.
+
+    A crew meter log is optional: it exists only where the habitat declares
+    `crew_log_meters` in its profile, and the shipped template declares none.
+    Telling a model with one account that it has two is how it ends up sending
+    a crew member to a tool that has nothing to tell them, or refusing a
+    per-room question by pointing at a log that does not exist. So this section
+    is attached to the habitats it is true of and withheld from the rest.
+
+    It sits in the stable block because the profile is read once at startup and
+    does not change under a running process.
+    """
+    from app.habitat import profile
+
+    if not profile().crew_log_meters:
+        return ""
+
+    return """
+
+## Two accounts of water and power, and they are never merged
+
+This habitat measures its water and power TWICE, by two unrelated methods, and
+you can reach both. Which one an answer came from is part of the answer.
+
+1. THE DATABASE - the habitat's own instruments, read with the telemetry tools
+   above. It meters the mains supply and the clean-water feed: the habitat as a
+   whole. It does not know which room or which tap.
+
+2. THE CREW METER LOG - get_crew_meter_log. Sub-meter dials on the wall, read
+   by hand on a round and written down, with consumption derived by
+   subtracting consecutive readings. It is the ONLY source that knows which
+   room drew the power or which tap drew the water.
+
+- Any question about a ROOM's power or a TAP's water - "which room uses most",
+  "how much does the shower take", "warm versus cold", "is the gym heavy" -
+  is answered by get_crew_meter_log and by nothing else. Do not tell someone
+  the habitat cannot break consumption down by place; it can, by hand, and
+  this is the tool.
+- NEVER add a figure from one account to a figure from the other, never
+  average them, and never present a hand-read figure as a sensor reading.
+  They are two independent measurements of the same habitat, and the whole
+  reason for holding both is that they can be compared.
+- When they are compared, compare like with like: the same mission days, both
+  accounts closed. Expect the sub-meters to come in somewhat UNDER the mains
+  meter - there are loads no room owns. Over is the interesting direction,
+  because the parts cannot exceed the whole.
+- The log is only as good as the rounds walked. It reports what is missing -
+  gaps, meters with nothing logged, days still waiting on a closing reading.
+  Say so when it does, and never quote a still-open day as a total."""
 
 
 def _habitat() -> str:

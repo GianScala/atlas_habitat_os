@@ -4,8 +4,8 @@
  * This is what the log is FOR. Everything above it says where the habitat's
  * consumption went; this says whether the account it says it from can be
  * believed at all — by holding it against a completely independent measurement
- * of the same days, taken by instruments that report to Grafana without a
- * human in the loop.
+ * of the same days, taken by instruments that report to the habitat database
+ * without a human in the loop.
  *
  * MATCHED ON THE MISSION DAY, never total against total. A crew log covering
  * MD-01 to MD-04 compared with a habitat meter covering the whole mission so
