@@ -1,0 +1,23 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Chat history database
+*.db
+*.db-wal
+*.db-shm
+
+# Uploaded knowledge-base documents. The crew's own files, never committed.
+/knowledge/
+
+# Optional local speech model weights. Downloaded by each operator and never
+# redistributed by ATLAS; individual voice models have their own licenses.
+/models/
+
+# Private habitat profiles belong here, never alongside public examples.
+/config/private/

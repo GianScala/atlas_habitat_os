@@ -1,0 +1,73 @@
+/* --------------------------------------------------------------------------
+   Trace, thinking, and sources — the "show your working" panels
+   -------------------------------------------------------------------------- */
+
+.panel {
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  overflow: hidden;
+}
+
+.panel__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.panel__summary::-webkit-details-marker {
+  display: none;
+}
+
+.panel__summary:hover {
+  color: var(--text);
+  background: var(--bg-raised);
+}
+
+.panel__chevron {
+  flex: 0 0 auto;
+  transition: transform 0.12s linear;
+  color: var(--text-faint);
+}
+
+.panel[open] .panel__chevron {
+  transform: rotate(90deg);
+}
+
+.panel__label {
+  flex: 0 0 auto;
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Shrinks and ellipsises rather than running off the end of the card: a long
+   measurement name used to be cut mid-word by the card's own overflow. */
+.panel__hint {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-left: auto;
+  padding-left: var(--space-3);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel__body {
+  padding: var(--space-3);
+  border-top: 1px solid var(--border);
+  background: var(--bg-raised);
+}

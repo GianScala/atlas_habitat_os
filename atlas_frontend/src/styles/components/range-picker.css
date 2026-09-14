@@ -1,0 +1,162 @@
+/* --- Range picker: one row of presets, shortest first, then Custom --- */
+
+/* The presets and the start-time field are one control, stacked: the field
+   belongs under the segment that opens it, not beside it, because it is that
+   segment's detail rather than a second, competing way to pick a window. */
+.window-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ranges {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-strong);
+  /* Segments share one border between them instead of each carrying its
+     own, which is what keeps the row from thickening as it wraps. */
+  gap: 0;
+}
+
+.range {
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-left: 1px solid var(--border);
+  transition: color 0.1s linear, background 0.1s linear;
+}
+
+.range:first-child {
+  border-left: none;
+}
+
+/* Minutes | hours | days. A heavier line where the scale changes, so the row
+   reads as three short groups rather than ten near-identical tokens. */
+.range--group {
+  border-left-color: var(--border-strong);
+}
+
+.range:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--bg-raised);
+}
+
+.range--on,
+.range--on:hover:not(:disabled) {
+  color: var(--text-inverse);
+  background: var(--accent);
+}
+
+.range:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* --- The custom window's start ---
+
+   Opened by the Custom segment above it, and left open for as long as a
+   custom window is the one in force — it is the only selection on the strip
+   whose label ("Custom") does not say what was selected, so the field has to
+   stay and say it. */
+
+.since {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  min-width: 0;
+}
+
+.since__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* The browser's own date and time control, squared off and set in the
+   console's mono like every other figure on the strip. Its calendar and its
+   clock are the platform's, which is the point: they are the two pickers
+   every reader already knows how to drive. */
+.since__input {
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  /* Match the interface's own light or dark, rather than the OS default the
+     control would otherwise paint its calendar popup in. */
+  color-scheme: light dark;
+}
+
+.since__input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.since__note {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+
+/* One of the two places colour is spent: this is a fault light on a control,
+   not decoration. */
+.since__note--bad {
+  color: var(--danger);
+}
+
+/* A flexible strip works on desktop. On a phone a real grid is calmer: every
+   window gets the same hit area and wrapping cannot produce ragged columns. */
+@media (max-width: 900px) {
+  .window-picker,
+  .ranges {
+    width: 100%;
+  }
+
+  .ranges {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .range {
+    min-width: 0;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-1);
+    border: 0;
+    background: var(--bg-panel);
+    line-height: 1.2;
+  }
+
+  .range--on,
+  .range--on:hover:not(:disabled) {
+    color: var(--text-inverse);
+    background: var(--accent);
+  }
+}
+
+@media (max-width: 480px) {
+  .ranges {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .since,
+  .since__input {
+    width: 100%;
+  }
+
+  .since .button {
+    min-height: 44px;
+  }
+}

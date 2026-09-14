@@ -1,0 +1,26 @@
+# Example for a single trusted crew. Caddy >= 2.8. Supply all variables privately.
+{$ATLAS_DOMAIN} {
+	basic_auth {
+		{$ATLAS_USER} {$ATLAS_PASSWORD_HASH}
+	}
+	request_body {
+		max_size 26MiB
+	}
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy no-referrer
+		Cache-Control "no-store"
+	}
+	@backend path /api /api/* /docs /docs/* /redoc /openapi.json
+	handle @backend {
+		reverse_proxy 127.0.0.1:8000 {
+			flush_interval -1
+		}
+	}
+	handle {
+		root * {$ATLAS_DIST}
+		try_files {path} /index.html
+		file_server
+	}
+}

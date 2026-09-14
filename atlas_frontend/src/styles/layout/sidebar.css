@@ -1,0 +1,243 @@
+/* --------------------------------------------------------------------------
+   Shell — sidebar beside the app
+   -------------------------------------------------------------------------- */
+
+.shell {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.shell > .app {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 var(--sidebar-width);
+  width: var(--sidebar-width);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-strong);
+  overflow: hidden;
+}
+
+/* Collapsed, the sidebar is a rail one button wide. Its top cell is the same
+   height as the page header, so the toggle sits level with the wordmark
+   beside it rather than below it. */
+.sidebar--collapsed {
+  flex-basis: auto;
+  width: auto;
+  align-items: stretch;
+}
+
+.sidebar__rail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: var(--header-height);
+  padding-inline: var(--space-2);
+}
+
+.sidebar__rail-body {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) var(--space-2);
+}
+
+/* The same height as the page header, so the new-chat button and the wordmark
+   beside it sit on one line. No rule under it: the sidebar is one column, and
+   a divider there cut its two halves apart for nothing. */
+.sidebar__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+  height: var(--header-height);
+  padding: 0 var(--space-3);
+}
+
+/* Grows into the space the toggle leaves, and shrinks rather than pushing the
+   toggle out of the sidebar when the label is long. */
+.sidebar__new {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sidebar__section {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-3) var(--space-2);
+  color: var(--text-faint);
+}
+
+.sidebar__section-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+
+.sidebar__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 0 var(--space-3);
+}
+
+.sidebar__empty {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--text-faint);
+}
+
+.chat-row {
+  display: flex;
+  align-items: stretch;
+  /* Without this the row is as wide as its longest title and the sidebar
+     simply clips it — the title never gets the chance to ellipsise. */
+  min-width: 0;
+  border-left: 2px solid transparent;
+}
+
+.chat-row:hover {
+  background: var(--bg-raised);
+}
+
+/* Selection is a solid ink marker in the gutter, not a tinted row — legible
+   at a glance and available in a palette with no tints. */
+.chat-row--active {
+  background: var(--bg-raised);
+  border-left-color: var(--accent);
+}
+
+/* `flex-basis: 0` rather than `auto`: the base size is then zero regardless of
+   how long the title is, so the row never has to shrink below its content —
+   which is the step Safari refuses to take on a <button>, and why long titles
+   were being cut off square instead of ending in an ellipsis. */
+.chat-row__open {
+  flex: 1 1 0%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+
+.chat-row__title,
+.chat-row__meta {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-row__title {
+  font-size: var(--text-sm);
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.chat-row--active .chat-row__title {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.chat-row__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+
+/* A square the same size as every other icon control, always present rather
+   than appearing on hover: a target that materialises under the cursor is
+   easy to hit by accident, and invisible to anyone not using a mouse. */
+.chat-row__delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  align-self: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  margin-right: var(--space-2);
+  color: var(--text-faint);
+  opacity: 0.45;
+  transition: opacity 0.1s linear, color 0.1s linear, background 0.1s linear;
+}
+
+.chat-row:hover .chat-row__delete,
+.chat-row__delete:focus-visible {
+  opacity: 1;
+}
+
+.chat-row__delete:hover {
+  color: var(--danger);
+  background: var(--bg-inset);
+}
+
+.sidebar__foot {
+  flex: 0 0 auto;
+  padding: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* A real button, on the same gutter as the rows above it — it deletes
+   everything, so it should not look like a caption. */
+.sidebar__clear {
+  width: 100%;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  border-color: var(--border);
+  color: var(--text-faint);
+}
+
+.sidebar__clear:hover:not(:disabled) {
+  color: var(--text-inverse);
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+
+@media (max-width: 900px) {
+  /* The sidebar leaves the flow and sits over the page; the collapsed rail
+     stays in it, so the toggle never disappears behind its own overlay. */
+  .sidebar {
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar--collapsed {
+    position: static;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 640px) {
+  /* The sidebar is only ever open deliberately on a narrow screen, and its
+     two actions are destructive or creative enough to keep their words. */
+  .sidebar__new .button__label,
+  .sidebar__clear .button__label {
+    display: inline;
+  }
+
+  /* Delete is unreachable without hover on a touch screen. */
+  .chat-row__delete {
+    opacity: 1;
+  }
+}

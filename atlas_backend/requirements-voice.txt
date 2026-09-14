@@ -1,0 +1,3 @@
+# Optional offline speech synthesis. Install into the same backend venv to
+# keep one voice in memory between answers. Piper retains its GPL-3.0 license.
+piper-tts==1.8.0

@@ -1,0 +1,233 @@
+# =============================================================================
+# Habitat profile — the annotated template. Copy it and edit.
+# =============================================================================
+#
+#   cp config/examples/habitat.example.yaml config/examples/my_habitat.yaml
+#   # then in .env:
+#   HABITAT_CONFIG=config/examples/my_habitat.yaml
+#
+# This file holds the handful of facts about a habitat that its database CANNOT
+# describe about itself. Everything discoverable — measurement names, field
+# names, tag values — is read from the database at runtime and must NOT be
+# listed here.
+#
+# Every section is optional. A profile with nothing but a `name` works: units
+# read as "not recorded", and the dashboard is derived from whatever the
+# database turns out to hold. Fill in the sections your habitat needs.
+#
+# The values below are illustrative placeholders from a fictional station.
+# None of them will match your database — replace them.
+
+# The habitat's name, as the assistant should refer to it.
+name: My Habitat
+
+# --- Where "where" comes from -------------------------------------------------
+# Tag keys that name a place, most specific first. A per-room query groups by
+# the first one a measurement actually has, so ATLAS can answer "per room"
+# without you telling it each measurement's tag naming.
+location_tag_keys:
+  - Location
+
+# --- The database's own metrics -----------------------------------------------
+# Some time-series databases write metrics about themselves into the same
+# database. These measurement-name prefixes keep them out of the sensor list.
+internal_prefixes: []
+#   - go_
+#   - influxdb_
+
+# --- Zone names ---------------------------------------------------------------
+# Tag value -> the human name for that place. A translation table only; listing
+# a zone is not a claim that it currently reports data.
+#
+# Where two tag values name the SAME physical place they must map to the same
+# string — that identity is what gives a room one colour across every chart.
+#
+# You do NOT have to fill this in: the crew can rename any location from the
+# Naming page in the interface, which stores it in the database and takes
+# precedence over this list.
+zone_names: {}
+#   Module1: Galley
+#   Module3: Dormitory
+#   2B: Kitchen
+
+# --- Locations that are not rooms ---------------------------------------------
+# Tag values excluded from per-room charts: crew, vehicles, external weather,
+# tanks, experiment rigs. Excluding rather than listing rooms means a newly
+# instrumented room appears on its own.
+non_room_locations: []
+#   - Outside
+#   - ROVER_1
+
+# --- Legend prefixes ----------------------------------------------------------
+# Tag keys whose raw values mean nothing alone. Grouping by a phase tag yields
+# series called "1", "2", "3"; a legend needs "Phase 1".
+tag_label_prefixes: {}
+#   Phase: "Phase "
+
+# --- Units --------------------------------------------------------------------
+# measurement -> field -> unit. THE ONE THING THAT CANNOT BE DISCOVERED: most
+# time-series databases store no unit metadata.
+#
+# An empty string means "known to be dimensionless" (a ratio), which is
+# different from a field being absent here — an absent field is reported as
+# "unit not recorded" and the assistant gives the bare number rather than
+# inventing a dimension. Never guess: a wrong unit is worse than no unit.
+units: {}
+#   Temperature: { value: "°C" }
+#   Humidity:    { value: "%" }
+#   CO2:         { value: ppm }
+#   Water:       { litres: L }
+#   Energy:      { total_kwh: kWh, power_active: W }
+
+# --- Stocks (tanks and stores) ------------------------------------------------
+# A stock's LEVEL is a state and its MOVEMENT is a flow — clean and grey water
+# are the universal example, but a battery charge state or a food store behave
+# identically.
+#
+# `role` is what makes an answer correct rather than merely arithmetic, and no
+# sensor knows it:
+#   supply  the FALL is consumption, the rise is a delivery  (clean water)
+#   waste   the RISE is what the habitat produced, the fall is an emptying
+#
+# The tank tool and the level/flow charts are offered only when this is set.
+stocks: []
+#   - key: clean_water
+#     label: Clean water
+#     role: supply
+#     measurement: Water
+#     field: litres
+#     tags: { Location: CleanWaterTank }
+#     noun: drawn from the clean water tank
+#   - key: grey_water
+#     label: Grey water
+#     role: waste
+#     measurement: Water
+#     field: litres
+#     tags: { Location: GreyWaterTank }
+
+# --- Instrument noise floors --------------------------------------------------
+# measurement -> field -> the smallest movement the gauge can be trusted to have
+# really seen, in the field's own units.
+#
+# Differencing a level amplifies gauge dither, so without a floor a motionless
+# tank reports steady phantom consumption. Measure it — take a window where the
+# tank demonstrably did not move and see how much the reading wandered. A
+# guessed threshold either invents use or silently erases it.
+noise_floors: {}
+#   Water:
+#     litres: 1.0
+
+# --- Electrical phase meter ---------------------------------------------------
+# Drives the "total instantaneous draw across phases" tool. Omit the whole
+# section for a habitat with no multi-phase meter and the tool is not offered.
+electrical: {}
+#   measurement: Electricity
+#   phase_tag: Phase
+#   phases: ["1", "2", "3"]
+#   default_field: current
+
+# --- Non-summable fields ------------------------------------------------------
+# Fields where summing across series (e.g. across phases) is not physically
+# meaningful. Averaging three phases' voltage is fine; adding them is not.
+non_summable_fields: []
+#   - voltage
+#   - frequency
+
+# --- Consumption rollup tags --------------------------------------------------
+# Tag values naming an ALREADY-AGGREGATED series (a whole-system rollup) rather
+# than a single meter, so consumption sums do not count the same energy twice.
+# The universal spellings (total, all, sum, overall, combined) are always
+# recognised; list your habitat's extras here.
+aggregate_tag_values: []
+#   - habitat
+#   - gridsupply
+
+# --- Mission plan resources ---------------------------------------------------
+# What the mission budgets and tracks, and the telemetry that reads each.
+#   kind: stock       differenced as a tank level (fall = use on a supply tank)
+#   kind: cumulative  differenced as a totaliser (last minus first)
+# The mission page shows exactly these; a habitat that budgets only power lists
+# only power.
+day_start_offset_minutes: 0   # the habitat clock's offset from UTC, in minutes
+
+mission_resources: []
+#   - key: water
+#     label: Clean water
+#     noun: drawn from the clean water tank
+#     kind: stock
+#     measurement: Water
+#     field: litres
+#     tags: { Location: CleanWaterTank }
+#     default_daily: 150.0
+#   - key: power
+#     label: Habitat power
+#     noun: through the whole-habitat energy meter
+#     kind: cumulative
+#     measurement: Energy
+#     field: total_kwh
+#     tags: { Location: Habitat }
+#     default_daily: 50.0
+
+# --- Dashboard ----------------------------------------------------------------
+# The charts this habitat draws. OMIT THE WHOLE SECTION and ATLAS derives a
+# catalogue from whatever the database holds — per-room charts for every located
+# measurement, level and flow charts for each stock above, and a consumption
+# chart for each cumulative mission resource. Declare it to curate exactly what
+# the crew sees.
+#
+# Panels whose measurement/field the database does not hold are hidden
+# automatically, so this is a wish list rather than a promise.
+#
+# A panel whose id starts with `room_` appears in the Room analysis view; every
+# other panel is whole-habitat. Panels with a `group_by` also drop the
+# `non_room_locations` above without repeating them.
+#
+#   mode:     mean | delta | drawdown | fillup
+#   chart:    line | area | bar
+#   deadband: a number, or `auto` to use this habitat's measured noise floor
+dashboard_panels: []
+#   - id: room_temperature
+#     title: Temperature by room
+#     subtitle: Averaged across every sensor in each room
+#     measurement: Temperature
+#     field: value
+#     group_by: Location
+#     group: Environment
+#   - id: clean_water_consumption
+#     title: Clean water consumed
+#     subtitle: How far the level fell in each interval.
+#     measurement: Water
+#     field: litres
+#     tags: { Location: CleanWaterTank }
+#     mode: drawdown
+#     chart: bar
+#     deadband: auto
+#     group: Water
+
+# --- Crew meter log -----------------------------------------------------------
+# The dials somebody walks round and reads by hand, if this habitat keeps such a
+# log. This is only the DEFAULT round: the crew can add, rename, reorder and
+# remove dials on the Naming page, which stores their version in the database
+# and takes precedence over this list.
+#
+# `code` is what is stencilled on the pipe or panel — it is how a crew tells two
+# identical dials apart at the wall. `stream` (warm | cold | none) separates the
+# half of the water story a per-tap chart cannot tell on its own: warm water is
+# water AND the power that heated it.
+crew_log_meters: {}
+#   power:
+#     - { key: galley,    label: Galley }
+#     - { key: dormitory, label: Dormitory }
+#   water:
+#     - { key: shower_warm, label: "Shower · warm", code: 1R, group: shower, group_label: Showers, stream: warm }
+#     - { key: shower_cold, label: "Shower · cold", code: 1B, group: shower, group_label: Showers, stream: cold }
+
+# --- SQL adapter mapping ------------------------------------------------------
+# Only for DATA_SOURCE=sql. See config/examples/postgres_habitat.yaml.
+# sql_mapping:
+#   table: sensor_readings
+#   measurement_column: metric_type
+#   location_column: room
+#   time_column: ts
+#   value_column: value
+#   time_encoding: datetime

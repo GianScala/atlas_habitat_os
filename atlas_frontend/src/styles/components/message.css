@@ -1,0 +1,115 @@
+/* --- Messages --- */
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.message--user {
+  align-items: flex-end;
+}
+
+.message__role {
+  color: var(--text-faint);
+}
+
+/* Ink block, square corners, no tail. A speech bubble is the wrong metaphor
+   for a logged instruction. */
+.message__bubble {
+  max-width: 85%;
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-inverse);
+  background: var(--bg-invert);
+  overflow-wrap: anywhere;
+}
+
+.message__body {
+  width: 100%;
+  min-width: 0;
+}
+
+/* One spacing rule for every block stacked under an answer, replacing the
+   inline margins that used to be repeated per block. */
+.message__section + .message__section {
+  margin-top: var(--space-3);
+}
+
+
+/* --- The line under an answer: copy, duration, model --- */
+
+.answer-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.answer-meta__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+/* Chrome, not content — the same weight as the trace's status labels, so it
+   sits under the answer without competing with it. */
+.answer-meta__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  transition: color 0.1s linear;
+}
+
+.answer-meta__copy:hover {
+  color: var(--text);
+}
+
+/* Whether the question left the machine. Marked rather than merely written,
+   because it is the one fact here with a consequence. */
+.answer-meta__where {
+  padding: 1px var(--space-1);
+  font-size: var(--text-2xs);
+  border: 1px solid currentColor;
+}
+
+.answer-meta__where--local {
+  color: var(--ok);
+}
+
+.answer-meta__where--remote {
+  color: var(--warn);
+}
+
+@media (max-width: 640px) {
+  .message__bubble {
+    max-width: 100%;
+  }
+
+  .answer-meta {
+    gap: var(--space-2) var(--space-3);
+  }
+}
+/* Read-aloud failures stay beside the answer that can be retried. */
+.answer-meta__voice-error {
+  flex-basis: 100%;
+  color: var(--danger);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  letter-spacing: normal;
+  text-transform: none;
+}

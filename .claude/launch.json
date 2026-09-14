@@ -1,0 +1,21 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "atlas-backend",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd atlas_backend && .venv/bin/python -m uvicorn app.main:app --reload"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "atlas-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "atlas_frontend", "run", "dev"],
+      "port": 5173,
+      "autoPort": true
+    }
+  ]
+}

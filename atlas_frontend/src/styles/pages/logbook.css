@@ -1,0 +1,793 @@
+/* --------------------------------------------------------------------------
+   The crew's meter log
+
+   Borrows the dashboard's card, grid and group rules wholesale, and the
+   mission page's bar and readout, because this page is the same object with
+   different contents — a row of cards has to line up along its tops and its
+   bottoms whichever page it is on.
+
+   What it adds is three things the rest of the app has no use for: a ring with
+   a figure in the middle, a ranked bar list, and a sheet of numeric inputs
+   fourteen rows deep.
+
+   The colour rule is the app's, unchanged: a coloured pixel is a claim. On
+   this page the claims are which room, which tap, warm against cold, morning
+   against night — everything else is the same monochrome as the chrome.
+   -------------------------------------------------------------------------- */
+
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.log__lede {
+  max-width: 78ch;
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Which sheet is on screen, and how much of it is filled in — the second is
+   the caveat on every figure below, so it travels with the switch rather than
+   sitting somewhere further down the page. */
+.log__switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.log__coverage {
+  flex: 1 1 24rem;
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* --- The three windows ---
+
+   Today, the last three days, the whole mission. Three columns where there is
+   room and one where there is not; never two, which would leave a widow. */
+
+.log__windows {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--space-4);
+}
+
+.log-window {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* The sentence the ring is drawn for. Pushed to the bottom of the card so the
+   three read on one line whatever their rings did. */
+.log-window__lead {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.log-window__caveat {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  color: var(--warn);
+}
+
+.log-window__caveat svg {
+  flex: 0 0 auto;
+  margin-top: 0.15em;
+}
+
+/* --- The ring ---
+
+   A part-to-whole with the total in the hole, because every slice is a share
+   OF that total and a reader who takes only the centre figure has lost
+   nothing. */
+
+.log-donut {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.log-donut__plot {
+  position: relative;
+  /* A DEFINITE size. The chart library sizes itself to 100% of this box, and a
+     percentage against a parent whose height is `auto` resolves to auto —
+     which is zero before anything is drawn, so nothing is ever drawn. */
+  flex: 0 0 auto;
+  width: 8.25rem;
+  height: 8.25rem;
+}
+
+.log-donut__centre {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.log-donut__total {
+  font-family: var(--font-mono);
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.log-donut__unit {
+  margin-top: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* THE HOLE HOLDS THE TOTAL AND ITS UNIT AND NOTHING ELSE. It used to carry a
+   third line naming the window — "MD-07–MD-09" — a string of unknown length
+   in a circle of fixed width, and it spilled over the ring on every label
+   longer than a day code. The card heading says which days it covers, in a
+   box that can hold it. */
+
+.log-donut__empty {
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--text-faint);
+}
+
+/* The ring's written twin. Identity is never colour alone — a reader who
+   cannot separate two hues reads this instead, and so does anyone who wants
+   the actual figure. */
+.log-shares {
+  flex: 1 1 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  /* WRAP UNDER THE RING RATHER THAN SHRINK BESIDE IT. Without a floor here
+     the list keeps compressing until every room name is an ellipsis, which
+     defeats the entire purpose of writing them out — the list exists so the
+     ring never has to be read by colour alone. */
+  min-width: 11rem;
+  list-style: none;
+}
+
+.log-shares__item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-2xs);
+}
+
+.log-shares__swatch {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 8px;
+  height: 8px;
+}
+
+/* WRAPS RATHER THAN TRUNCATES. An ellipsis here would turn "Analytic Lab"
+   and "Analytic Lab sink" into the same three characters, which is precisely
+   the confusion the written list exists to prevent. */
+.log-shares__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.log-shares__code,
+.log-bars__code {
+  margin-left: var(--space-2);
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+}
+
+.log-shares__share {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+.log-shares__amount {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* --- The ranked bars ---
+
+   The chart for eleven taps. Drawn against the LARGEST bar rather than the
+   total, so the small ones stay visible — which would be a lie if the bar were
+   the figure, so the figure is written beside it and the bar is only the
+   ordering made visible. */
+
+.log-bars {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.log-bars__row {
+  display: grid;
+  /* The label column is generous on purpose: "Second shower · warm" and
+     "Shower-room sink · cold" are the names that matter most here, and a tap
+     the crew cannot identify is a tap they cannot go and look at. */
+  /* The last column holds either a percentage or the words "not logged", and
+     it is sized for the words. At three characters' width they wrapped onto
+     two lines and pushed the row taller than its neighbours. */
+  grid-template-columns: minmax(11rem, 1.1fr) minmax(0, 1.8fr) 5.5rem 5rem;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-xs);
+}
+
+.log-bars__row:last-child {
+  border-bottom: none;
+}
+
+/* A meter that logged nothing keeps its row. Dropping it would read as "there
+   is no meter there", which is a different and wrong claim. */
+.log-bars__row--absent {
+  color: var(--text-faint);
+}
+
+/* Wraps rather than truncates, for the same reason the ring's list does: an
+   ellipsis turns the warm tap and the cold one into the same name. */
+.log-bars__label {
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.log-bars__track {
+  height: 0.6rem;
+  background: var(--bg-raised);
+}
+
+.log-bars__fill {
+  display: block;
+  height: 100%;
+  min-width: 1px;
+}
+
+.log-bars__amount,
+.log-bars__share {
+  font-family: var(--font-mono);
+  text-align: right;
+}
+
+.log-bars__share {
+  color: var(--text-muted);
+}
+
+.log-bars__absent-mark {
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+  cursor: help;
+  white-space: nowrap;
+}
+
+/* --- The detail block --- */
+
+.log__detail-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+/* THE GAP BELONGS TO THE ROW, NOT TO THE TITLE INSIDE IT.
+   `.dashboard__group-title` carries its own bottom margin, which is what
+   separates a section heading from its content everywhere else in the app. In
+   this row it applies to the title alone — so the switch sitting beside it
+   kept no gap of its own and came to rest against the top edge of the cards
+   below. The row spaces itself, and both sides of it clear the content by the
+   same amount. */
+.log__detail-head .dashboard__group-title {
+  margin-bottom: 0;
+}
+
+.log__detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* The ranked list takes the whole row, and the rings share the one below it.
+   Eleven taps against a bar track is the widest thing on this page and the
+   least willing to be narrowed: squeezed into a third of the width, the bars
+   collapse to slivers and the share column is the first thing to go. A ring,
+   by contrast, is a fixed circle and does not care. */
+.log__detail-wide {
+  grid-column: 1 / -1;
+}
+
+/* A second, quieter segmented control — it picks the window for a section
+   rather than what the whole page is about. */
+.views--small .view {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-2xs);
+}
+
+/* --- The day-by-day chart --- */
+
+.log-daily .panel-chart__plot {
+  height: 16rem;
+}
+
+/* Water can be cut two ways and gets a control; power has one split and gets
+   none. Sits above the plot, on the right, where it reads as a property of
+   the chart rather than of the card's heading. */
+.log-daily__split {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-2);
+}
+
+/* The span a band covers, said in the legend rather than left to a hover.
+   "Daytime" alone still leaves open when it starts and stops; this is the
+   sentence that settles it. */
+.day-legend__covers {
+  margin-left: var(--space-2);
+  font-size: var(--text-2xs);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-faint);
+}
+
+/* Hollow, matching the bars: a day still waiting on a closing reading. */
+.day-legend__bar--open {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--series-1);
+}
+
+.log-tip__total {
+  margin-top: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--border);
+}
+
+.log-empty {
+  padding: var(--space-4);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--text-faint);
+}
+
+/* --- The check against the habitat's own meters --- */
+
+.log-check {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.log-check__figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.log-check__figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.log-check__figure-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.log-check__figure-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.log-check__figure-value--ok { color: var(--ok); }
+.log-check__figure-value--warn { color: var(--warn); }
+.log-check__figure-value--bad { color: var(--danger); }
+
+/* The finding, said as a consequence rather than as a percentage for the
+   reader to judge. Bordered like the mission page's forward reading, and for
+   the same reason: it is the sentence somebody came to this page for. */
+.log-check__reading {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  background: var(--bg-raised);
+  border-left: 2px solid var(--series-3);
+}
+
+.log-check__reading--warn {
+  border-left-color: var(--warn);
+}
+
+.log-check__reading--bad {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-left-color: var(--danger);
+}
+
+.log-check__warn {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--warn);
+}
+
+.log-check__warn svg {
+  flex: 0 0 auto;
+  margin-top: 0.15em;
+}
+
+/* --- The sheet ---
+
+   The clipboard, on screen: a row per mission day, a column per dial. Last on
+   the page on purpose — it is the most of it and the least of the point. */
+
+.log__sheet {
+  margin-top: var(--space-2);
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Which of the two jobs the sheet is doing: filling in a round, or auditing
+   the record. The note beside it says which, because the two layouts look
+   different enough that a reader arriving at the wrong one wonders what
+   happened to their table. */
+.sheet__modes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet__modes-note {
+  flex: 1 1 20rem;
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+/* --- One day at a time ---
+
+   The layout the rounds are actually walked in. Every dial on screen at once,
+   so filling in a morning is one pass down a column rather than a hunt across
+   a table fourteen rows deep. */
+
+.sheet__day-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.sheet__day-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sheet__day-pick-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.sheet__day-pick .plan__input {
+  width: auto;
+  min-width: 13rem;
+}
+
+.sheet__day-state {
+  flex: 1 1 16rem;
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* The day layout puts its derived figures in their own columns rather than
+   under the boxes, so a row reads left to right as: what the dial said twice,
+   what that means twice, and the day. */
+.sheet__table--day .sheet__cell--derived {
+  vertical-align: middle;
+  text-align: right;
+}
+
+.sheet__meter--derived {
+  color: var(--series-3);
+  text-align: right;
+}
+
+/* The banner row over the day sheet's two halves. The table is two different
+   things side by side — figures typed in, and figures worked out from them —
+   and without a word over each, the derived columns read as four more boxes
+   waiting to be filled. */
+.sheet__super th {
+  padding-bottom: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: left;
+  border-bottom: none;
+}
+
+.sheet__super--derived {
+  color: var(--series-3);
+  text-align: right;
+}
+
+/* The one figure in the row that is the answer, so it carries the weight the
+   two blocks behind it do not. */
+.sheet__derived--total {
+  justify-content: flex-end;
+  font-size: var(--text-xs);
+  color: var(--text);
+}
+
+.sheet__table--day .sheet__derived {
+  justify-content: flex-end;
+  padding-right: 0;
+}
+
+/* A dial's name is a row heading here rather than a column one, so it takes
+   the width a name needs instead of an input's. */
+.sheet__table--day .sheet__day {
+  min-width: 11rem;
+}
+
+.sheet__round-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.sheet__round-note {
+  margin-top: var(--space-2);
+  max-width: 74ch;
+  font-size: var(--text-2xs);
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Scrolls in its own box so eleven taps never scroll the page sideways. */
+.sheet__scroll {
+  margin-top: var(--space-3);
+  overflow-x: auto;
+}
+
+.sheet__table {
+  border-collapse: collapse;
+  font-size: var(--text-xs);
+}
+
+.sheet__caption {
+  padding-bottom: var(--space-2);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+  text-align: left;
+}
+
+.sheet__table th,
+.sheet__table td {
+  padding: var(--space-1) var(--space-2);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.sheet__meter {
+  min-width: 6.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  vertical-align: bottom;
+}
+
+.sheet__code {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--series-1);
+}
+
+/* The day column stays put while the dials scroll past it. Without this, a
+   crew filling in the eleventh tap has no idea which day they are on. */
+.sheet__corner,
+.sheet__day {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--bg-panel);
+}
+
+.sheet__corner {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.sheet__day {
+  display: table-cell;
+}
+
+.sheet__day-code {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.sheet__day-date {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+
+.sheet__row--past .sheet__day-code {
+  color: var(--text-faint);
+}
+
+.sheet__row--today,
+.sheet__row--today .sheet__day {
+  background: var(--bg-raised);
+}
+
+.sheet__row--today .sheet__day-code {
+  color: var(--series-1);
+}
+
+.sheet__cell {
+  vertical-align: top;
+}
+
+.sheet__box {
+  display: block;
+}
+
+/* Named for a screen reader; the column heading and the row heading name it
+   for everyone else. */
+.sheet__box-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sheet__input {
+  width: 6rem;
+  padding: 0.2rem var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.sheet__input:hover {
+  border-color: var(--border-strong);
+}
+
+.sheet__input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* A box the mission has not reached. Typeable — a crew reading ahead is not
+   an error — but not asking to be filled in. */
+.sheet__input--future {
+  opacity: 0.55;
+}
+
+.sheet__input--bad {
+  border-color: var(--danger);
+}
+
+/* Under every box: what that reading turned out to MEAN. The whole design of
+   the sheet is this pairing — the arithmetic is visible at the moment of
+   entry, so a digit typed wrong is caught by the person who can still go back
+   and look at the dial. */
+.sheet__derived {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-height: 1.1rem;
+  padding: 0.1rem var(--space-2) 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+  cursor: help;
+}
+
+.sheet__derived--ok {
+  color: var(--series-3);
+}
+
+.sheet__derived--gap {
+  color: var(--warn);
+}
+
+.sheet__derived--backwards {
+  color: var(--danger);
+}
+
+.log__clear {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.log__clear-ask {
+  flex: 1 1 20rem;
+  font-size: var(--text-xs);
+  color: var(--danger);
+}
+
+@media (max-width: 900px) {
+  .log__coverage {
+    text-align: left;
+  }
+}

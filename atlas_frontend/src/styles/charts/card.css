@@ -1,0 +1,161 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  background: var(--bg-panel);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Fixed height, so the plots below start on the same line across a row: one
+   line of title, two of caption, whatever either of them actually says. */
+.card__head {
+  flex: 0 0 auto;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.card__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.card__title {
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Takes the label typography above, but NOT its uppercasing: a unit symbol is
+   data, and SI case carries meaning. Uppercased, kWh becomes KWH, µSv/h loses
+   its micro, and mW/m² reads as MW/m² — off by a factor of a billion. */
+.card__unit {
+  flex: 0 0 auto;
+  color: var(--text-faint);
+  white-space: nowrap;
+  text-transform: none;
+}
+
+/* An absent unit is a fact about the database, not a label. Dotted, so it
+   reads as "ask me" rather than as a unit called "no unit". */
+.card__unit--unknown {
+  color: var(--text-faint);
+  border-bottom: 1px dotted var(--border-strong);
+  cursor: help;
+}
+
+.card__subtitle {
+  margin-top: var(--space-1);
+  /* Two lines, reserved whether or not the caption needs them. */
+  min-height: 3em;
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- When there is nothing to plot ---
+   Occupies the space the chart would have, so a card with no data is the same
+   height as the ones beside it and the row stays square. */
+.card__state {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 12rem;
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  color: var(--text-faint);
+  background: var(--bg-raised);
+}
+
+.card__state svg {
+  color: var(--text-faint);
+}
+
+.card__state-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.card__state-text {
+  max-width: 28rem;
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+/* A remark about what the chart above it shows, not a failure. */
+.card__note {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--text-faint);
+  background: var(--bg-raised);
+}
+
+.card__state-action {
+  margin-top: var(--space-2);
+}
+
+.card__state-action .button__label {
+  display: inline;
+}
+
+.card__state--error {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.card__state--error svg,
+.card__state--error .card__state-title {
+  color: var(--danger);
+}
+
+.card__state--error .card__state-text {
+  color: var(--danger);
+  opacity: 0.85;
+}
+
+/* The source disclosure sits flush at the foot of a card, sharing the card's
+   padding rather than boxing itself inside it. */
+.panel--flush {
+  margin-top: var(--space-3);
+  border: none;
+  border-top: 1px solid var(--border);
+  background: none;
+}
+
+.panel--flush .panel__summary {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.panel--flush .panel__summary:hover {
+  background: none;
+}
+
+.panel--flush .panel__body {
+  padding-left: 0;
+  padding-right: 0;
+  background: none;
+  border-top: none;
+}

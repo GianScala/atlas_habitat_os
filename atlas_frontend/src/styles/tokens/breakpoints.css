@@ -1,0 +1,30 @@
+/**
+ * Breakpoints — the four widths, and the only tokens that change at them.
+ *
+ * Each width removes something rather than rearranging it: the control
+ * strip's columns, then the chart grid's, then the sidebar, then the button
+ * labels. Those are component decisions and they live with their components —
+ * grep a breakpoint to find every rule at that width.
+ *
+ *   1240px  the dashboard's control strip stacks     pages/dashboard.css
+ *   1100px  the chart grid narrows                   pages/dashboard.css
+ *    900px  sidebar overlays; plan editor stacks     layout/sidebar.css,
+ *                                                    pages/plan-editor.css
+ *    640px  buttons go icon-only                     components/button.css
+ *
+ * What is left here is the global re-stepping: page rhythm tightens as the
+ * viewport narrows. Nothing else in the app redefines these two.
+ */
+
+@media (max-width: 900px) {
+  :root {
+    --gutter: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: var(--space-3);
+    --header-height: 2.75rem;
+  }
+}

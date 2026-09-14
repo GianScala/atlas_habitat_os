@@ -1,0 +1,77 @@
+/**
+ * Scales — the measurements that do not change with the theme.
+ *
+ * Type, space, shape, and layout are identical in light and dark. Only colour
+ * swaps, and colour lives in `theme-light.css` / `theme-dark.css`. Keeping the
+ * two apart is what makes "add a theme" mean "write one file of colours"
+ * rather than "copy 90 tokens and hope".
+ */
+
+:root {
+  /* Lets the UA style form controls, scrollbars, and the canvas to match
+     whichever theme is active. The explicit overrides live with the themes. */
+  color-scheme: light dark;
+
+  /* --- Type ---
+     NASA's Horizon design system pairs three open-source families, and this
+     uses the same three for the same reasons: Inter for headings and display,
+     Public Sans for body copy, DM Mono for figures and technical data. All
+     three are SIL Open Font License and are served from /public/fonts, because
+     a habitat is often offline and type that falls back to Times is a page
+     that looks broken exactly when it matters.
+
+     Helvetica stays in the fallback stack: it is the face the 1975 NASA
+     Graphics Standards Manual specified, and the closest thing on any machine
+     if a webfont fails to load.
+
+     Mono carries every label, figure and identifier, which is what makes
+     columns line up without any extra work. */
+  /* The wordmark only. Wide and geometric, the closest open-licensed face to
+     NASA's own logotype; unreadable as body copy, which is why it is scoped. */
+  --font-wordmark: 'Michroma', 'Inter', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  --font-display: 'Inter', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif,
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Public Sans', 'Inter', 'Helvetica Neue', Helvetica, Arial,
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
+    Consolas, 'Liberation Mono', monospace;
+
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.5rem;
+
+  /* Every uppercase label in the app uses this tracking. Set once so they
+     cannot drift apart. */
+  --tracking-label: 0.12em;
+  --tracking-wordmark: 0.22em;
+
+  /* --- Space --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* --- Shape ---
+     Zero, everywhere. Kept as tokens rather than deleted so a stray
+     `border-radius: var(--radius)` cannot reintroduce a rounded corner. */
+  --radius-sm: 0;
+  --radius: 0;
+  --radius-lg: 0;
+
+  /* --- Layout ---
+     `--gutter` and `--header-height` are re-stepped per breakpoint in
+     `breakpoints.css`; nothing else redefines them. */
+  --content-width: 50rem;
+  --page-width: 84rem;
+  --header-height: 3rem;
+  --sidebar-width: 15rem;
+  --gutter: var(--space-5);
+}

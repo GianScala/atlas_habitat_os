@@ -1,0 +1,50 @@
+# Repo-wide ignores. Each half also has its own .gitignore for the things
+# only it produces (node_modules, .venv, build output).
+
+.DS_Store
+*.swp
+*~
+
+# Editor state
+.idea/
+.vscode/
+*.iml
+
+# Secrets — the .env.example files are the ones that get committed.
+.env
+.env.local
+.env.*.local
+
+# Per-machine tool state. launch.json is shared; the local settings are not.
+.claude/settings.local.json
+
+# All environment variants are private except explicit templates.
+.env.*
+!.env.example
+# Runtime data and exports, regardless of which component creates them.
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.sqlite3-*
+*.log
+*.csv
+*.tsv
+*.sql
+*.dump
+*.bak
+*.zip
+*.tar
+*.gz
+/private/
+/data/
+/exports/
+/backups/
+
+# Python caches from repository maintenance scripts.
+__pycache__/
+*.py[cod]
+
+# Local speech runtime session artifacts.
+*.ses

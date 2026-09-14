@@ -1,0 +1,185 @@
+/* --- Room selector ---
+
+   Closed it is one button reporting the count; open it is the whole list.
+   Eleven chips wrapped onto two lines pushed the charts down the page for a
+   choice most readers make once. */
+
+.room-select {
+  position: relative;
+}
+
+.room-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 13rem;
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  transition: color 0.1s linear, background 0.1s linear, border-color 0.1s linear;
+}
+
+.room-select__trigger:hover {
+  border-color: var(--rule);
+}
+
+/* Open, the trigger is ink — the same mark a selected segment carries, so
+   "this control is doing something" reads the same way everywhere. */
+.room-select__trigger--open,
+.room-select__trigger--open:hover {
+  color: var(--text-inverse);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.room-select__caret {
+  flex: 0 0 auto;
+  transition: transform 0.1s linear;
+}
+
+.room-select__trigger--open .room-select__caret {
+  transform: rotate(180deg);
+}
+
+/* Over the charts rather than in the flow: the list is momentary, and the
+   page under it should not jump every time it opens. */
+.room-select__popup {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 3px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 17rem;
+  max-width: calc(100vw - 2 * var(--gutter));
+  max-height: min(24rem, 60vh);
+  background: var(--bg-panel);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow);
+}
+
+.room-select__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.room-select__count {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.room-select__actions {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.room-select__list {
+  overflow-y: auto;
+  padding: var(--space-1) 0;
+  list-style: none;
+}
+
+.room-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.1s linear, background 0.1s linear;
+}
+
+.room-option:hover {
+  color: var(--text);
+  background: var(--bg-raised);
+}
+
+/* A selected room reads in full ink, so the list can be scanned for what is
+   on without reading every box. */
+.room-option:has(.room-option__box:checked) {
+  color: var(--text);
+}
+
+/* The native control restyled rather than hidden, so it keeps its focus
+   ring, its keyboard behaviour, and its announced state. */
+.room-option__box {
+  flex: 0 0 auto;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  transition: background 0.1s linear, border-color 0.1s linear;
+}
+
+.room-option__box:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Drawn from two borders rather than set as a glyph — a check mark from a
+   font is a different shape on every platform. */
+.room-option__box:checked::after {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 6px;
+  margin: -1px auto 0;
+  transform: rotate(45deg);
+  border: solid var(--bg-panel);
+  border-width: 0 1.5px 1.5px 0;
+}
+
+/* `color` rather than `background`, so the dashed variant can build its
+   pattern out of the same value — the mark the chart legend uses. */
+.room-option__swatch {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 3px;
+  background: currentColor;
+}
+
+.room-option__swatch--dashed {
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0 4px,
+    transparent 4px 7px
+  );
+}
+
+.room-option__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A room reported under more than one tag spelling. The row is one room;
+   this says how many sensor groups sit behind it. */
+.room-option__note {
+  flex: 0 0 auto;
+  padding-left: var(--space-2);
+  color: var(--text-faint);
+  border-left: 1px solid var(--border);
+}

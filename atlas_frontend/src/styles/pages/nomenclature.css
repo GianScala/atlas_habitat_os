@@ -1,0 +1,606 @@
+/* --------------------------------------------------------------------------
+   Settings: Database nomenclature, and Connectors.
+
+   Both pages are lists of things you act on, so both are built from the same
+   three pieces rather than from prose:
+
+     .panel    a bordered group with a heading and a count
+     .stat     the figures that answer "what am I looking at" at a glance
+     .entry    one row you can edit, laid out as key -> value
+
+   The rule throughout is that the DATABASE's own vocabulary is set in mono and
+   the crew's is set in the body face. That contrast is doing real work: it is
+   how a reader tells the tag a query matches from the name they chose for it.
+   -------------------------------------------------------------------------- */
+
+.naming {
+  padding-bottom: var(--space-8);
+}
+
+.naming__intro {
+  max-width: 64ch;
+  margin: 0 0 var(--space-5);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+/* --- Summary figures ----------------------------------------------------- */
+
+.stats {
+  display: grid;
+  /* Fixed count rather than auto-fit: auto-fit leaves an empty cell beside the
+     three figures when the wide row wraps, which reads as a missing stat. */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-bottom: var(--space-6);
+  border: 1px solid var(--border);
+  background: var(--border);
+}
+
+.stat {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-panel);
+}
+
+.stat__value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.stat__label {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.stat--wide {
+  grid-column: 1 / -1;
+}
+
+.stat--wide .stat__value {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 34rem) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- A bordered group ---------------------------------------------------- */
+
+.panel {
+  margin-bottom: var(--space-6);
+  border: 1px solid var(--border);
+}
+
+.panel__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.panel__title {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.panel__count {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.panel__blurb {
+  max-width: 70ch;
+  margin: 0;
+  padding: var(--space-3) var(--space-4) 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.panel__body {
+  padding: var(--space-2) 0;
+}
+
+.panel__foot {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* --- One editable row ---------------------------------------------------- */
+
+/* Key on the left, arrow, name on the right. The arrow is the whole idea of
+   the page in one glyph: this becomes that, and nothing is written back. */
+.entry {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) auto minmax(10rem, 1.2fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+}
+
+.entry + .entry {
+  border-top: 1px solid var(--border);
+}
+
+.entry:hover {
+  background: var(--bg-raised);
+}
+
+.entry__key {
+  min-width: 0;
+}
+
+.entry__code {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entry__meta {
+  display: block;
+  margin-top: 1px;
+  color: var(--text-faint);
+  font-size: var(--text-2xs);
+}
+
+.entry__arrow {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.entry__input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-sm);
+}
+
+.entry__input:hover {
+  border-color: var(--border);
+}
+
+.entry__input:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+/* A name the crew set, rather than one the database or the profile supplied.
+   Marked because "is this mine or inherited" is the question this page exists
+   to answer, and a dot answers it without a column of its own. */
+.entry__input--own {
+  border-color: var(--border);
+}
+
+.entry__badge {
+  justify-self: end;
+  min-width: 4.5rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.entry__badge--own {
+  color: var(--accent);
+}
+
+@media (max-width: 46rem) {
+  .entry {
+    grid-template-columns: 1fr auto;
+    row-gap: var(--space-1);
+  }
+  .entry__arrow {
+    display: none;
+  }
+  .entry__input {
+    grid-column: 1 / -1;
+  }
+}
+
+/* --- Filter -------------------------------------------------------------- */
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.filter__input {
+  width: 100%;
+  max-width: 22rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-sm);
+}
+
+.filter__input:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.filter__count {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+/* --- Nothing to show ----------------------------------------------------- */
+
+.empty {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.empty__mark {
+  color: var(--text-faint);
+  opacity: 0.6;
+}
+
+.empty__title {
+  margin: var(--space-3) 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.empty__detail {
+  max-width: 52ch;
+  margin: 0 auto var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.empty__detail code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+/* --- Buttons shared by both pages ---------------------------------------- */
+
+.naming__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.naming__button:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.naming__button--primary {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.naming__button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.naming__icon-button {
+  display: inline-flex;
+  padding: var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+}
+
+.naming__icon-button:hover:not(:disabled) {
+  color: var(--danger);
+}
+
+.naming__icon-button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.naming__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+}
+
+/* --- The crew's meter round ---------------------------------------------- */
+
+/* A dial is four fields, so it is a row of inputs rather than a card: the
+   whole round has to be readable as a list you walk in order. */
+.meter {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1.6fr) 5rem 6rem minmax(6rem, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+}
+
+.meter + .meter {
+  border-top: 1px solid var(--border);
+}
+
+.meter__head {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1.6fr) 5rem 6rem minmax(6rem, 1fr) auto;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.meter--power,
+.meter--power .meter__head {
+  grid-template-columns: minmax(9rem, 2fr) minmax(6rem, 1fr) auto;
+}
+
+.meter__field {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-sm);
+}
+
+.meter__field:hover {
+  border-color: var(--border);
+}
+
+.meter__field:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.meter__id {
+  overflow: hidden;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meter__actions {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 46rem) {
+  .meter,
+  .meter--power {
+    grid-template-columns: 1fr auto;
+    row-gap: var(--space-1);
+  }
+  .meter__head {
+    display: none;
+  }
+}
+
+/* --- Connectors ---------------------------------------------------------- */
+
+/* The drop zone is the page's primary action, so it is the largest thing on
+   it and says what it takes before you click. */
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  padding: var(--space-7) var(--space-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--motion-fast, 120ms) ease,
+    background var(--motion-fast, 120ms) ease;
+}
+
+.drop:hover,
+.drop--over {
+  border-color: var(--accent);
+}
+
+.drop--busy {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.drop__mark {
+  color: var(--text-faint);
+}
+
+.drop__title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.drop__hint {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}
+
+/* The real input is replaced by the zone, which is a label; the input still
+   has to exist and stay reachable by keyboard. */
+.drop__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.drop__input:focus-visible + .drop,
+.drop:focus-within {
+  border-color: var(--accent);
+}
+
+/* One document. A row rather than a card: the columns are worth comparing
+   down, and a grid of cards would hide how many passages each one carries. */
+.doc {
+  display: grid;
+  grid-template-columns: auto minmax(10rem, 2fr) minmax(7rem, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.doc + .doc {
+  border-top: 1px solid var(--border);
+}
+
+.doc__mark {
+  color: var(--text-faint);
+}
+
+.doc__name {
+  display: block;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doc__meta {
+  display: block;
+  margin-top: 1px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+}
+
+.doc__index {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.doc__index strong {
+  display: block;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* Connected is a state, not an action, so it reads as a switch rather than a
+   button: on shows a tick, off shows the word you would be turning on. */
+.doc__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 7rem;
+  justify-content: center;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-xs);
+}
+
+.doc__toggle--on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.doc__toggle:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+@media (max-width: 46rem) {
+  .doc {
+    grid-template-columns: auto 1fr auto;
+    row-gap: var(--space-2);
+  }
+  .doc__index {
+    grid-column: 2 / -1;
+  }
+}
+
+/* Said once, plainly: matching is degraded, and here is the one command. */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  max-width: 72ch;
+  margin: 0 0 var(--space-5);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--warn);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.notice code {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.notice__mark {
+  flex: none;
+  margin-top: 2px;
+}

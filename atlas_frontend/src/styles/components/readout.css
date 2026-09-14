@@ -1,0 +1,70 @@
+/* --------------------------------------------------------------------------
+   Readout strip
+
+   Key/value telemetry facts, monospaced, on one line. This is where a figure
+   that needs a name goes — "37 measurement types" says what the 37 counts,
+   which a bare number in a badge never did.
+   -------------------------------------------------------------------------- */
+
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-4);
+  list-style: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.readout__item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.readout__key {
+  color: var(--text-faint);
+}
+
+.readout__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: var(--space-3);
+  }
+
+  .readout__item {
+    display: grid;
+    gap: 0.125rem;
+  }
+
+  .readout__key {
+    font-size: 0.625rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .readout__value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 480px) {
+  .readout {
+    grid-template-columns: 1fr 1.4fr;
+  }
+
+  .readout__item:last-child {
+    grid-column: 1 / -1;
+  }
+}

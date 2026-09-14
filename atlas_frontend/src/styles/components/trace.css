@@ -1,0 +1,107 @@
+/* --- Trace steps --- */
+
+.trace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+}
+
+.trace__step {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.trace__marker {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  margin-top: 0.45em;
+  background: var(--text-faint);
+}
+
+.trace__step--ok .trace__marker {
+  background: var(--ok);
+}
+
+.trace__step--empty .trace__marker {
+  background: var(--warn);
+}
+
+.trace__step--failed .trace__marker {
+  background: var(--danger);
+}
+
+.trace__step--running .trace__marker {
+  background: var(--text);
+  animation: pulse 1.2s steps(2, jump-none) infinite;
+}
+
+.trace__detail {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.trace__name {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.trace__args {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.trace__status {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.trace__status--failed {
+  color: var(--danger);
+}
+
+/* One rule for every block of raw InfluxQL, wherever it appears. */
+.trace__query,
+.sources__query {
+  display: block;
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: 1.6;
+  color: var(--text-muted);
+  background: var(--bg-inset);
+  border-left: 2px solid var(--border-strong);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* --- Thinking --- */
+
+.thinking {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* --- Sources --- */
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sources .sources__query {
+  margin-top: 0;
+}

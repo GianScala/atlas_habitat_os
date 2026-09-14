@@ -1,0 +1,139 @@
+# =============================================================================
+# Reference habitat — the profile the TEST SUITE runs against
+# =============================================================================
+#
+# A fictional station, deliberately not any real one. It exists so the suite has
+# a habitat exercising every feature of the profile format at once:
+#
+#   * zone names in two vocabularies for the same rooms (a real hazard)
+#   * a supply stock and a waste stock
+#   * a multi-phase electrical meter
+#   * a whole-habitat rollup that must never be summed with its parts
+#   * a measured instrument noise floor
+#   * a full dashboard catalogue and a hand-read meter round
+#
+# Tests assert against THIS file, not against anything shipped in
+# config/examples/, so changing a shipped example can never break the suite and
+# the suite can never constrain what a real mission ships.
+
+name: Reference Station
+
+location_tag_keys: [Location, Connection, Sensor, Device, Host]
+
+internal_prefixes: [go_, storage_, task_, service_, http_, influxdb_]
+
+# Two vocabularies for the same places — the per-room submeters tag by name
+# while the environment sensors tag by module id. Values naming the SAME place
+# must map to the same string, which is what gives a room one colour everywhere.
+zone_names:
+  Module1: Galley
+  Module2: Test bench F
+  Module3: Test bench E
+  Module4: Laboratory
+  Airlock: Airlock
+  AirLock: Airlock
+  Outside: Outside (external weather)
+  Galley: Galley
+  Test bench F: Test bench F
+  Test bench E: Test bench E
+  Laboratory: Laboratory
+
+non_summable_fields: [voltage, frequency, powerFactor, phaseAngle]
+
+aggregate_tag_values: [habitat, gridsupply]
+
+non_room_locations: [Outside, ROVER_1, EVA_1, EVA_2]
+
+tag_label_prefixes:
+  Phase: "Phase "
+
+electrical:
+  measurement: Electricity
+  phase_tag: Phase
+  phases: ["1", "2", "3"]
+  default_field: current
+
+stocks:
+  - key: clean_water
+    label: Clean water
+    role: supply
+    measurement: Water
+    field: litres
+    tags: { Container: CleanWaterTank }
+    noun: drawn from the clean water tank
+  - key: grey_water
+    label: Grey water
+    role: waste
+    measurement: Water
+    field: litres
+    tags: { Container: GreyWaterTank }
+    noun: produced into the grey water tank
+
+noise_floors:
+  Water:
+    litres: 1.0
+
+day_start_offset_minutes: 120
+
+mission_resources:
+  - key: water
+    label: Clean water
+    noun: drawn from the clean water tank
+    kind: stock
+    measurement: Water
+    field: litres
+    tags: { Container: CleanWaterTank }
+    default_daily: 150.0
+  - key: power
+    label: Habitat power
+    noun: through the whole-habitat energy meter
+    kind: cumulative
+    measurement: Energy
+    field: total_forward_active_energy
+    tags: { Phase: Total, Location: Habitat }
+    default_daily: 50.0
+
+units:
+  Electricity:
+    current: A
+    voltage: V
+    powerActive: W
+    powerFactor: ""
+    totalForwardActiveEnergy: kWh
+  Energy:
+    power_active: W
+    total_forward_active_energy: kWh
+  Temperature: { value: "°C" }
+  Humidity: { value: "%" }
+  CO2: { value: ppm }
+  Water: { litres: L, water_height: cm }
+
+dashboard_panels:
+  - { id: room_temperature, title: Temperature by room, subtitle: Averaged per room, measurement: Temperature, field: value, group_by: Location, group: Environment }
+  - { id: room_humidity,    title: Humidity by room,    subtitle: Averaged per room, measurement: Humidity,    field: value, group_by: Location, group: Environment }
+  - { id: room_co2,         title: CO₂ by room,         subtitle: Averaged per room, measurement: CO2,         field: value, group_by: Location, group: Environment }
+  - { id: clean_water_level, title: Clean water level, subtitle: Tank contents, measurement: Water, field: litres, tags: { Container: CleanWaterTank }, chart: area, group: Water }
+  - { id: clean_water_level_detail, title: Clean water level, close up, subtitle: Scaled to the water that moved, measurement: Water, field: litres, tags: { Container: CleanWaterTank }, chart: line, group: Water }
+  - { id: clean_water_consumption, title: Clean water consumed, subtitle: How far the level fell in each interval, measurement: Water, field: litres, tags: { Container: CleanWaterTank }, mode: drawdown, chart: bar, deadband: auto, group: Water }
+  - { id: clean_water_consumption_total, title: Clean water used, running total, subtitle: The bars added up, measurement: Water, field: litres, tags: { Container: CleanWaterTank }, mode: drawdown, chart: area, deadband: auto, cumulative: true, group: Water }
+  - { id: grey_water_level, title: Grey water level, subtitle: Waste tank contents, measurement: Water, field: litres, tags: { Container: GreyWaterTank }, chart: area, group: Water }
+  - { id: grey_water_change, title: Grey water change, subtitle: Net change in each interval, measurement: Water, field: litres, tags: { Container: GreyWaterTank }, mode: delta, chart: bar, deadband: auto, group: Water }
+  - { id: room_power, title: Power draw by room, subtitle: Per-room submeters, measurement: Energy, field: power_active, group_by: Location, tags: { Phase: Total }, exclude: [Habitat, GridSupply, SyntheticRollup], group: Power }
+  - { id: mains_power_by_phase, title: Mains draw by phase, subtitle: Split across its phases, measurement: Electricity, field: powerActive, group_by: Phase, group: Power }
+  - { id: habitat_energy, title: Habitat energy consumed, subtitle: Totaliser differenced per interval, measurement: Energy, field: total_forward_active_energy, tags: { Phase: Total, Location: Habitat }, mode: delta, chart: bar, group: Power }
+
+# Synthetic test bench: four taps, deliberately unrelated to a mission layout.
+crew_log_meters:
+  power:
+    - { key: test_bench_a, label: Test bench A }
+    - { key: test_bench_e, label: Test bench E }
+    - { key: test_bench_f, label: Test bench F }
+    - { key: test_bench_b, label: Test bench B }
+    - { key: test_bench_c, label: Test bench C }
+    - { key: test_bench_d, label: Test bench D }
+    - { key: test_bench_g, label: Test bench G }
+  water:
+    - { key: demo_warm, label: Test warm outlet, code: SIM-A, group: shower, group_label: Showers, stream: warm }
+    - { key: demo_cold, label: Test cold outlet, code: SIM-B, group: shower, group_label: Showers, stream: cold }
+    - { key: demo_wash, label: Test wash outlet, code: SIM-C, group: laundry, group_label: Laundry, stream: cold }
+    - { key: demo_sink, label: Test sink outlet, code: SIM-D, group: test_bench_a, group_label: Test bench A, stream: cold }

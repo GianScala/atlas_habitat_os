@@ -1,0 +1,102 @@
+/* --- Cursor while streaming --- */
+
+.cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--text);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* --- Working indicator --- */
+
+.working {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.working__dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.working__dots span {
+  width: 5px;
+  height: 5px;
+  background: var(--text-faint);
+  animation: blocks 1.2s steps(2, jump-none) infinite;
+}
+
+.working__dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.working__dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Stepped rather than eased — a console light does not fade. */
+@keyframes blocks {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+
+/* --- The turn still running, in the header ---
+   Same height and frame as the badges beside it. It is a link, because the
+   thing you want on seeing it is to go and watch. */
+
+.working-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 1.875rem;
+  padding: 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-strong);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.working-pill:hover {
+  border-color: var(--accent);
+}
+
+/* Monospaced and fixed-width so a two-digit second does not shunt the
+   words beside it sideways every ten seconds. */
+.working-pill__clock {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.5em;
+  text-align: right;
+}
+
+/* At narrow widths the header is already full. The dots and the clock carry
+   the message on their own — something is running, and for how long. */
+@media (max-width: 860px) {
+  .working-pill__what {
+    display: none;
+  }
+}

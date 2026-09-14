@@ -1,0 +1,381 @@
+/* --------------------------------------------------------------------------
+   Dashboard
+   -------------------------------------------------------------------------- */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* One control strip, not two stacked bars: a labelled row per filter, with
+   every label on one column and every control on another, all inside the page
+   gutter so they share the charts' left edge. */
+.controls {
+  flex: 0 0 auto;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.controls__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+}
+
+/* Label, controls, readout. The controls column takes the width it needs and
+   the readout takes what is left — the other way round squeezed the picker
+   until it wrapped a preset onto a line of its own. */
+.filter-row {
+  display: grid;
+  grid-template-columns: 4.5rem auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.filter-row + .filter-row {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* Sits on the first line of its row's controls rather than at its top edge,
+   so the word and the buttons beside it share a centre line. */
+.filter-row__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  line-height: 1.5rem;
+  padding-top: 0.125rem;
+}
+
+.filter-row__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  min-width: 0;
+}
+
+/* A row with no readout beside it — the chips get the whole width. */
+.filter-row__body:last-child {
+  grid-column: 2 / -1;
+}
+
+/* Its own column at the end of the window row: it reports what the picker
+   beside it produced, so it belongs on that line rather than wrapping to a
+   half-empty one of its own — and Refresh rides with it, since what it
+   corrects is the "Read at" printed alongside. */
+.filter-row__aside {
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* Refresh and the crew log, kept adjacent. Two actions on one row that wrap
+   as a pair rather than one at a time. */
+.filter-row__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.filter-row__readout {
+  padding-top: 0.3125rem;
+}
+
+/* What the selected view shows, said in a sentence beside the switch rather
+   than left to the reader to infer from which charts appeared. Shares the
+   label's line box so the two sit on one centre line. */
+.filter-row__blurb {
+  min-width: 0;
+  max-width: 40rem;
+  font-size: var(--text-xs);
+  line-height: 1.5rem;
+  padding-top: 0.125rem;
+  color: var(--text-faint);
+}
+
+/* Hard right, on the same column the readout below it uses. */
+.filter-row__switch {
+  justify-self: end;
+}
+
+/* A control that is a word rather than a box — for the small actions beside a
+   count, where a bordered button would outweigh what it does. */
+.link-button {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--border-strong);
+  transition: color 0.1s linear, text-decoration-color 0.1s linear;
+}
+
+.link-button:hover:not(:disabled) {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
+.link-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dashboard__status {
+  padding: var(--space-7) var(--gutter);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-faint);
+}
+
+/* --- What is on screen, while it is not yet what was asked for ---
+
+   The dashboard's slowest moment is the one right after a window is picked,
+   and the charts already drawn stay up through it — blanking them loses the
+   reader's place and tells them nothing. The cost of keeping them is that the
+   page then shows one window under another window's heading, so it has to say
+   so, in the gap between the control that was just used and the charts it
+   governs. */
+
+.dashboard__pending {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-2) var(--gutter);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+}
+
+/* A console light: on, off, on. Stepped rather than eased, like the other
+   three animations in the app — and stopped outright by base/motion.css for
+   anyone who has asked for that. */
+.dashboard__pending-dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  background: var(--text-muted);
+  animation: pending-blink 1s steps(1, end) infinite;
+}
+
+@keyframes pending-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+/* --- Panels --- */
+
+.dashboard__scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.dashboard__inner {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-5) var(--gutter) var(--space-7);
+}
+
+/* Charts of a window that is no longer the selected one. Held back rather
+   than hidden: still legible, plainly not current, and not clickable — a
+   reader must not widen the window from a panel that is about to be replaced
+   by one that may not be empty at all. */
+.dashboard__inner--superseded {
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity 0.1s linear;
+}
+
+.dashboard__group + .dashboard__group {
+  margin-top: var(--space-6);
+}
+
+/* Label, then a rule running to the far edge of the grid — the cheapest way
+   to make a heading read as a section boundary rather than a caption. */
+.dashboard__group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  color: var(--text-faint);
+}
+
+.dashboard__group-title::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Hairline grid.
+
+   The line lives on the card, not on the container: each card draws a 1px
+   ring outside its own box, and the 1px gutter between two of them is exactly
+   wide enough for their two rings to land on top of each other and read as
+   one line. Drawing it the other way round — a coloured container showing
+   through the gaps — meant a row that did not fill its columns showed that
+   colour as a large grey rectangle where a card should have been. */
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+  gap: 1px;
+}
+
+
+/* The control strip stacks well before the sidebar does. Label, picker and
+   readout need about 1160px of inner width to sit on one line; below that the
+   readout used to run underneath the last two range presets, because the
+   picker's column is sized to its content and the readout's can shrink to
+   nothing. So each label goes above its own control instead. */
+@media (max-width: 1240px) {
+  .filter-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  /* There is only one column now, so the wide layout's "start at column 2"
+     would open an implicit second one and lay the control over its label. */
+  .filter-row__body:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .filter-row__label {
+    line-height: 1.2;
+    padding-top: 0;
+  }
+
+  .filter-row__readout {
+    justify-self: start;
+    padding-top: 0;
+  }
+
+  /* "Hard right" in one column would put the switch on the far edge of a row
+     whose label sits at the far left, with nothing between them. */
+  .filter-row__switch {
+    justify-self: start;
+  }
+
+  .filter-row__blurb {
+    line-height: 1.4;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 1100px) {
+  .dashboard__grid {
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .controls__inner {
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+  }
+
+  .filter-row {
+    gap: var(--space-3);
+  }
+
+  .filter-row + .filter-row {
+    padding-top: var(--space-4);
+  }
+
+  .filter-row__label {
+    font-size: 0.6875rem;
+  }
+
+  .filter-row__blurb {
+    max-width: 34rem;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+
+  .filter-row__aside {
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    width: 100%;
+    gap: var(--space-4);
+  }
+
+  .filter-row__readout {
+    padding-top: 0;
+  }
+
+  .filter-row__buttons {
+    flex-wrap: nowrap;
+  }
+
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .controls__inner {
+    gap: var(--space-3);
+  }
+
+  .filter-row__aside {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .filter-row__buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .filter-row__buttons .button {
+    min-height: 44px;
+  }
+
+  .filter-row__buttons .button:only-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Dashboard actions need their words on a phone: two unexplained square
+     icons are slower to scan than two short, full-width actions. */
+  .filter-row__buttons .button__label {
+    display: inline;
+  }
+}
+
+/* Removing an extra is somebody's afternoon coming off the plan, so the
+   confirm reads as the destructive thing it is. */
+.link-button--danger {
+  color: var(--danger);
+}

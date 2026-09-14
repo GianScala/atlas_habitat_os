@@ -1,0 +1,395 @@
+/* --------------------------------------------------------------------------
+   Settings
+
+   Reads as a document rather than an instrument panel: one column, sections
+   down it, and the same rules and monospace labels the rest of the app uses.
+   The one place it raises its voice is the row for a model that cannot call
+   tools, because that is the difference between an answer read from a sensor
+   and an answer invented.
+   -------------------------------------------------------------------------- */
+
+.settings {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.settings__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--content-width);
+  padding-block: var(--space-6) var(--space-7);
+}
+
+.settings__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.settings__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.settings__lede {
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 46rem;
+}
+
+.settings__path {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text);
+  word-break: break-all;
+}
+
+.settings__readout {
+  font-size: var(--text-2xs);
+  padding-bottom: var(--space-1);
+}
+
+/* --- Where answers come from --- */
+
+.settings__providers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-3);
+}
+
+.provider {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+}
+
+/* The selected one is marked on its left edge rather than by a tint: there is
+   no tint in a monochrome palette, and the bar survives both themes. */
+.provider--active {
+  border-color: var(--border-strong);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.provider__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.provider__label {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.provider__description {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.provider__model {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text);
+}
+
+.provider__detail {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+.provider__detail--warn {
+  color: var(--warn);
+}
+
+.provider .button {
+  margin-top: auto;
+}
+
+/* --- A model --- */
+
+.settings__list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+
+.model {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+.model + .model {
+  border-top: 1px solid var(--border);
+}
+
+.model--active {
+  background: var(--bg-raised);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.model__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.model__name {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.model__badge {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 0.125rem var(--space-2);
+  border: 1px solid var(--border);
+  background: var(--bg-inset);
+}
+
+.model__badge--active {
+  color: var(--text-inverse);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.model__description {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 46rem;
+}
+
+.model__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.model__fact {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+/* The one fact on this page that changes what an answer is worth. */
+.model__fact--warn {
+  color: var(--warn);
+}
+
+.model__progress {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+}
+
+.model__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
+}
+
+.model__state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 1.875rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ok);
+}
+
+/* --- Install by name --- */
+
+.settings__install {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.settings__field {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 1.875rem;
+  padding: 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+}
+
+.settings__field:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.settings__field:disabled {
+  opacity: 0.5;
+}
+
+/* --- The state of things --- */
+
+.settings__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--warn);
+  background: var(--warn-soft);
+  border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent);
+}
+
+.settings__warning svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+}
+
+/* --- Appearance --- */
+
+/* Three settings, so they are all on show as a segmented row rather than
+   hidden behind a menu or a button you have to press twice to understand. */
+.settings__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* What "System" currently resolves to. Without it the row cannot say whether
+   the page you are looking at is light or dark by choice or by inheritance. */
+.settings__note {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* A section's lede and the one action that applies to it, on one line —
+   the action beside what it acts on rather than up in the header. */
+.settings__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/* --- The custom answer style ---
+
+   A box that takes a paragraph, under the row of four registers it belongs
+   to. Its own Save, because typing in a textarea has no moment the way
+   pressing one of four buttons does, and a style that saved on every keystroke
+   would be a different style for every half-written sentence. */
+
+.style-custom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.style-custom__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 60ch;
+}
+
+.style-custom__input {
+  width: 100%;
+  padding: var(--space-3);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  resize: vertical;
+}
+
+.style-custom__input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.style-custom__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.style-custom__saved {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ok);
+}
+
+/* The switch between the two halves of Settings. Sits above both, in the same
+   segmented form the dashboard uses, because it is the same kind of choice. */
+.settings__switch {
+  margin-bottom: var(--space-6);
+}
+
+.settings__switch-blurb {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.voice-settings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.voice-settings label { display: grid; gap: var(--space-2); min-width: 0; }
+.voice-settings label > span { font-size: var(--text-sm); color: var(--text-muted); }
+.voice-settings select {
+  width: 100%; min-width: 0; min-height: 44px; padding: var(--space-2);
+  background: var(--bg-panel); color: var(--text); border: 1px solid var(--border-strong);
+}
+.voice-settings .button { min-height: 44px; }
+.voice-settings__status { grid-column: 1 / -1; color: var(--text-faint); font-size: var(--text-sm); }
+@media (max-width: 640px) { .voice-settings { grid-template-columns: minmax(0, 1fr); } }

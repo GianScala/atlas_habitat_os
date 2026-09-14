@@ -1,0 +1,158 @@
+/* --------------------------------------------------------------------------
+   Composer
+   -------------------------------------------------------------------------- */
+
+.composer {
+  flex: 0 0 auto;
+  padding: var(--space-4) var(--gutter) var(--space-4);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+.composer__inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.composer__field {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  transition: border-color 0.1s linear, box-shadow 0.1s linear;
+}
+
+/* One hairline in ink, not two — an inset ring on top of the border read as
+   a 2px selected box rather than as focus. */
+.composer__field:focus-within {
+  border-color: var(--accent);
+}
+
+.composer__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-height: 12rem;
+  padding: var(--space-2);
+  background: none;
+  border: none;
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+}
+
+.composer__input::placeholder {
+  color: var(--text-faint);
+}
+
+.composer__send {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--text-inverse);
+  background: var(--accent);
+  transition: opacity 0.1s linear;
+}
+
+.composer__voice {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--text-muted);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-strong);
+}
+
+.composer__voice:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.composer__voice:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.composer__voice--recording {
+  color: var(--text-inverse);
+  background: var(--danger);
+  border-color: var(--danger);
+  animation: voice-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes voice-pulse {
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 22%, transparent); }
+}
+
+.composer__voice-note {
+  min-height: 1.5rem;
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.composer__voice-note--error { color: var(--danger); }
+
+.composer__voice-note button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.25rem 0.5rem;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+
+.composer__send:hover:not(:disabled) {
+  opacity: 0.82;
+}
+
+.composer__send:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.composer__send--stop {
+  color: var(--text-inverse);
+  background: var(--danger);
+}
+
+.composer__footnote {
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.composer__footnote kbd {
+  padding: 0.15em 0.4em;
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  color: var(--text-muted);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+}
+
+.composer__footnote-mobile { display: none; }
+
+@media (max-width: 640px) {
+  .composer { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+  .composer__footnote-desktop { display: none; }
+  .composer__footnote-mobile { display: inline; }
+  .composer__voice-note { justify-content: space-between; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .composer__voice--recording { animation: none; }
+}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Ask questions about analog space habitat telemetry, answered only from real sensor queries."
+    />
+    <meta name="author" content="Gianmarco Scalabrin" />
+    <title>ATLAS</title>
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!--
+      Apply the stored theme before the stylesheet paints.
+
+      Without this, a reader who chose an override that disagrees with their
+      OS gets one frame of the wrong palette. It has to be inline and
+      synchronous to beat first paint, which is why this small piece of logic
+      lives here instead of in `src/theme/theme.ts` — the key is shared with
+      THEME_STORAGE_KEY there, so change the two together.
+    -->
+    <script>
+      try {
+        var t = localStorage.getItem('atlas.theme')
+        if (t === 'light' || t === 'dark') {
+          document.documentElement.setAttribute('data-theme', t)
+        }
+      } catch (e) {
+        /* Private mode: fall through to the OS preference. */
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

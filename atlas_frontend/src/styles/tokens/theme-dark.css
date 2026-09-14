@@ -1,0 +1,91 @@
+/**
+ * Dark theme — the same design inverted, not a second one: ink and paper
+ * swap, and the greys between them keep their order.
+ *
+ * Two blocks, because there are two ways to be in dark mode:
+ *
+ *   @media   the OS asked for it, and the reader has not overridden us.
+ *            Guarded with `:not([data-theme='light'])` so an explicit choice
+ *            of light still wins on a dark-mode machine.
+ *   [data-theme='dark']
+ *            the reader chose it, whatever the OS says. This has to win in
+ *            the other direction too, so it comes second.
+ *
+ * The two carry the SAME values and must stay in sync — plain CSS cannot
+ * share one declaration block across a media query and a selector. They are
+ * kept adjacent here so a change to one is an obvious change to both.
+ */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --bg: #0a0b0c;
+    --bg-panel: #111214;
+    --bg-raised: #191b1d;
+    --bg-inset: #222528;
+    --bg-invert: #f2f3f4;
+
+    --text: #f2f3f4;
+    --text-muted: #a4a8ad;
+    --text-faint: #74797f;
+    --text-inverse: #0a0b0c;
+
+    --border: #2a2d31;
+    --border-strong: #4c5157;
+    --rule: #6f757c;
+
+    --accent: #f2f3f4;
+    --accent-soft: #222528;
+    --accent-text: #f2f3f4;
+
+    --ok: #45c07d;
+    --ok-soft: #13251b;
+
+    --warn: #d3a03f;
+    --warn-soft: #262015;
+
+    --danger: #f0776c;
+    --danger-soft: #2b1917;
+
+    --shadow-sm: none;
+    --shadow: 0 2px 10px rgb(0 0 0 / 0.5);
+    --shadow-lg: 6px 0 24px rgb(0 0 0 / 0.55);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0a0b0c;
+  --bg-panel: #111214;
+  --bg-raised: #191b1d;
+  --bg-inset: #222528;
+  --bg-invert: #f2f3f4;
+
+  --text: #f2f3f4;
+  --text-muted: #a4a8ad;
+  --text-faint: #74797f;
+  --text-inverse: #0a0b0c;
+
+  --border: #2a2d31;
+  --border-strong: #4c5157;
+  --rule: #6f757c;
+
+  --accent: #f2f3f4;
+  --accent-soft: #222528;
+  --accent-text: #f2f3f4;
+
+  --ok: #45c07d;
+  --ok-soft: #13251b;
+
+  --warn: #d3a03f;
+  --warn-soft: #262015;
+
+  --danger: #f0776c;
+  --danger-soft: #2b1917;
+
+  --shadow-sm: none;
+  --shadow: 0 2px 10px rgb(0 0 0 / 0.5);
+  --shadow-lg: 6px 0 24px rgb(0 0 0 / 0.55);
+}

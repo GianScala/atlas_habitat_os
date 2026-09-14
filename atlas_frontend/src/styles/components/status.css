@@ -1,0 +1,79 @@
+/* --- Status light --- */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 1.875rem;
+  padding: 0 var(--space-3);
+  color: var(--text-muted);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* Square, because everything is — and because a square is easier to see at
+   7px than a circle of the same area. */
+.status__dot {
+  width: 7px;
+  height: 7px;
+  background: var(--text-faint);
+  flex: 0 0 auto;
+}
+
+.status--ok .status__dot {
+  background: var(--ok);
+}
+
+.status--warn .status__dot {
+  background: var(--warn);
+}
+
+.status--down .status__dot {
+  background: var(--danger);
+}
+
+.status--down {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 40%, transparent);
+}
+
+.status--warn {
+  color: var(--warn);
+  border-color: color-mix(in srgb, var(--warn) 40%, transparent);
+}
+
+.status--checking .status__dot {
+  animation: pulse 1.4s steps(2, jump-none) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+
+/* At the narrowest width the header carries four controls beside the
+   wordmark, and the words are what it can afford to lose: the dot is
+   already the signal, and it is the part that is colour-coded.
+   Visually hidden rather than removed, so `role="status"` still announces a
+   change of state and the label is still read aloud. */
+@media (max-width: 640px) {
+  .status__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .status {
+    padding-inline: var(--space-2);
+  }
+}

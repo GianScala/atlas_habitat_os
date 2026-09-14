@@ -1,0 +1,70 @@
+/**
+ * Chart series — the one place colour is allowed to carry data.
+ *
+ * Eight categorical slots, validated against this app's own chart surface for
+ * lightness band, chroma, colourblind separation, and normal-vision
+ * separation. The order is the safety mechanism, not decoration: adjacent
+ * slots are the pairs most likely to be confused, so they are the pairs that
+ * were checked.
+ *
+ * Never add a ninth by generating a hue. Past the eighth entity the palette
+ * starts a second lap and the lines are drawn dashed instead — the pairing of
+ * colour and stroke is assigned in `lib/palette.ts`.
+ *
+ * This is the file to open to restyle every chart in the app. Both themes are
+ * here rather than in `theme-light.css` / `theme-dark.css`, because the eight
+ * are a set that was checked as a set, and splitting them across two files is
+ * how a set stops being one.
+ */
+
+:root {
+  --series-1: #2a78d6; /* blue */
+  --series-2: #eb6834; /* orange */
+  --series-3: #1baf7a; /* aqua */
+  --series-4: #eda100; /* yellow */
+  --series-5: #e87ba4; /* magenta */
+  --series-6: #008300; /* green */
+  --series-7: #4a3aa7; /* violet */
+  --series-8: #e34948; /* red */
+
+  /* Chart chrome — greyscale, recessive on purpose. The data is the only
+     thing on a plot allowed to be colourful. */
+  --chart-grid: #e6e6e6;
+  --chart-axis: #b4b4b4;
+  --chart-cursor: #7a7a7a;
+}
+
+/* The same eight hues, re-stepped for the dark surface and validated as a set
+   against it — not an automatic lightening of the light steps. Kept in sync
+   across both dark blocks, as in `theme-dark.css`. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+
+    --chart-grid: #212427;
+    --chart-axis: #3b3f44;
+    --chart-cursor: #74797f;
+  }
+}
+
+:root[data-theme='dark'] {
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+
+  --chart-grid: #212427;
+  --chart-axis: #3b3f44;
+  --chart-cursor: #74797f;
+}

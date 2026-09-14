@@ -1,0 +1,70 @@
+/**
+ * Light theme — the base palette, and the one every other file is written
+ * against.
+ *
+ * The whole interface is monochrome: black, white, and the greys between
+ * them. Nothing in the chrome is coloured, and every corner is square. That
+ * is not a style exercise — it is what makes the two places colour DOES
+ * appear mean something:
+ *
+ *   status      three instrument colours (nominal, caution, fault) and
+ *               nothing else, so a coloured pixel in the chrome is always a
+ *               claim about the system.
+ *   chart data  the eight categorical series slots, in `series.css`.
+ *
+ * Every token here is redefined — same names, different values — in
+ * `theme-dark.css`. No component knows which theme is active.
+ */
+
+:root {
+  /* --- Surfaces --- */
+  --bg: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-raised: #f4f4f4;
+  --bg-inset: #eaeaea;
+  --bg-invert: #0a0a0a;
+
+  /* --- Text --- */
+  --text: #0a0a0a;
+  --text-muted: #4d4d4d;
+  --text-faint: #7a7a7a;
+  --text-inverse: #ffffff;
+
+  /* --- Lines ---
+     `--rule` is the heavy structural line: the edge under the header, the
+     border of a panel group. `--border` is the hairline inside them. */
+  --border: #d6d6d6;
+  --border-strong: #9b9b9b;
+  --rule: #0a0a0a;
+
+  /* --- Meaning ---
+     The accent is ink. A selected control is not a blue control, it is a
+     black one with white type — which reads at a glance and never competes
+     with the chart colours. */
+  --accent: #0a0a0a;
+  --accent-soft: #eaeaea;
+  --accent-text: #0a0a0a;
+
+  /* Instrument colours. Restrained on purpose — a status light, not a
+     highlight. */
+  --ok: #17693a;
+  --ok-soft: #e8f1ea;
+
+  --warn: #8a5a06;
+  --warn-soft: #f5eddd;
+
+  --danger: #a8231b;
+  --danger-soft: #f7e6e4;
+
+  /* Flat by default. The only shadows left are the two that carry real
+     information: a tooltip floating over the plot, and the sidebar sitting
+     on top of the page on a narrow screen. */
+  --shadow-sm: none;
+  --shadow: 0 2px 10px rgb(0 0 0 / 0.14);
+  --shadow-lg: 6px 0 24px rgb(0 0 0 / 0.22);
+}
+
+/* Chosen light explicitly: pin the UA's own surfaces to match. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}

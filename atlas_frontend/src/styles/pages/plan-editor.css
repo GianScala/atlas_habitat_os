@@ -1,0 +1,213 @@
+/* --- The plan editor --- */
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-panel);
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+/* Resources down, horizons across — the shape of the decision. */
+.plan__grid {
+  display: grid;
+  grid-template-columns: 10rem repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.plan__corner,
+.plan__column {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.plan__row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+.plan__resource {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+/* SI case, not the label's uppercase: kWh must not become KWH. */
+.plan__unit {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 400;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+.plan__field {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+/* Named for a screen reader; the column heading names it for everyone else. */
+.plan__field-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.plan__input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.plan__input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.plan__input:disabled {
+  opacity: 0.5;
+}
+
+.plan__input--narrow {
+  width: 5rem;
+}
+
+/* On the control that changes it: this figure is still ours, not yours. */
+.plan__source {
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.plan__hint,
+.plan__setting-note {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+.plan__settings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.plan__setting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.plan__setting-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.plan__setting-control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.plan__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--danger);
+  background: var(--danger-soft);
+  box-shadow: inset 0 0 0 1px var(--danger);
+}
+
+.plan__error svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+}
+
+.plan__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.plan__reset {
+  margin-left: auto;
+}
+
+
+@media (max-width: 900px) {
+  /* The plan's four columns become one field per line, each labelled — the
+     column headings are the only thing naming those inputs, and they do not
+     survive the collapse. */
+  .plan__grid,
+  .plan__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .plan__column {
+    display: none;
+  }
+
+  .plan__field-label {
+    position: static;
+    display: block;
+    width: auto;
+    height: auto;
+    margin-bottom: var(--space-1);
+    clip-path: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .plan__source {
+    top: auto;
+    bottom: var(--space-2);
+    transform: none;
+  }
+}

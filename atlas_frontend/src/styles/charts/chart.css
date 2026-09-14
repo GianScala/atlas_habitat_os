@@ -1,0 +1,66 @@
+/* --- Chart --- */
+
+.panel-chart {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Takes the height the card has left over. The floor keeps a plot readable in
+   a card that has nothing to spare, and gives the grid a size to lay a row out
+   from before any stretching happens. */
+.panel-chart__plot {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 12rem;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  list-style: none;
+  padding: 0;
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: opacity 0.1s linear, color 0.1s linear;
+}
+
+.legend__item:hover {
+  color: var(--text);
+}
+
+.legend__item--dimmed {
+  opacity: 0.3;
+}
+
+.legend__swatch {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 3px;
+  background: currentColor;
+}
+
+/* Matches the dashed stroke used for a room's second sensor group, so the
+   legend key and the line on the plot are the same mark. */
+.legend__swatch--dashed {
+  height: 3px;
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0 4px,
+    transparent 4px 7px
+  );
+}

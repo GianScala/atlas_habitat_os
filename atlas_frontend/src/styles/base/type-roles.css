@@ -1,0 +1,46 @@
+/* --------------------------------------------------------------------------
+   Shared type roles
+
+   Three rules that every label, figure, and identifier in the app opts into,
+   instead of eleven near-identical declarations drifting apart over time.
+   -------------------------------------------------------------------------- */
+
+/* Small uppercase section label. */
+.message__role,
+.sidebar__section,
+.room-select__count,
+.dashboard__group-title,
+.suggestion__label,
+.readout__key,
+.card__unit,
+.status {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Anything that is a number the eye may want to compare down a column. */
+.readout__value,
+.tooltip__value,
+.card__unit,
+.chat-row__meta,
+.markdown table {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* Headings take the display face. Inter is a touch tighter and more
+   deliberate than the body face at large sizes, which is the whole reason
+   NASA's system splits the two. */
+h1,
+h2,
+h3,
+h4,
+.naming__title,
+.settings__title,
+.card__title {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}

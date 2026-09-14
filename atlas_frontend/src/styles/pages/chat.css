@@ -1,0 +1,40 @@
+/* --------------------------------------------------------------------------
+   Chat
+   -------------------------------------------------------------------------- */
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.chat__scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+.chat__inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--gutter) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.chat__loading {
+  padding: var(--space-6) 0;
+  text-align: center;
+  color: var(--text-faint);
+}
+
+
+@media (max-width: 640px) {
+  .chat__inner {
+    padding-top: var(--space-4);
+    gap: var(--space-5);
+  }
+}

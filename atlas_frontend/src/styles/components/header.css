@@ -1,0 +1,88 @@
+/* --- Header --- */
+
+.header {
+  flex: 0 0 auto;
+  background: var(--bg-panel);
+  border-bottom: 2px solid var(--rule);
+}
+
+/* The one strip that does not join the centred column.
+   `bleed__inner` caps content at `--page-width` and centres it, which is right
+   for a page of charts and wrong for chrome: the box it centres is as wide as
+   whatever is beside it, so the sidebar made it narrower on the chat page than
+   on the dashboard, and every control in the header — the link light, the nav
+   button, the settings gear — slid sideways as you navigated. Full bleed
+   instead, so the gear is one gutter from the window edge on every page and at
+   every sidebar state. It is the top-right corner of the app; it should be in
+   the same place every time you reach for it. */
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: var(--header-height);
+  max-width: none;
+}
+
+.header__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* The mark sits at the same weight as the wordmark beside it, not dimmed
+   like the tagline: it is half of the identity, not an annotation on it. */
+.header__mark {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-right: 0.15rem;
+  flex: none;
+}
+
+.header__name {
+  /* The wordmark carries the identity, so it is the one place a display face
+     earns its keep: wide, geometric, and closer to NASA's own lettering than
+     anything the interface sets text in. Michroma is already wide, so the
+     tracking that suited the mono wordmark is halved. */
+  font-family: var(--font-wordmark);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: calc(var(--tracking-wordmark) / 2);
+  /* The tracking on the last letter would otherwise push the tagline a
+     character-width away from where it looks aligned. */
+  margin-right: calc(var(--tracking-wordmark) / -2);
+}
+
+.header__tagline {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* A hairline before the tagline reads as a divider on the same baseline,
+     which is cheaper than a second row. */
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border);
+}
+
+.header__spacer {
+  flex: 1 1 auto;
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+
+/* The tagline is the first thing to go when the header runs out of room. */
+@media (max-width: 640px) {
+  .header__tagline {
+    display: none;
+  }
+}

@@ -1,0 +1,21 @@
+/* --------------------------------------------------------------------------
+   App shell
+   -------------------------------------------------------------------------- */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Every full-width strip and every column of content lines up on this one
+   gutter, so the wordmark, the range picker, and the first chart all share a
+   left edge. */
+.bleed__inner {
+  width: 100%;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}

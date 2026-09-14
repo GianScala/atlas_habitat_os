@@ -1,0 +1,73 @@
+/**
+ * The stylesheet.
+ *
+ * One import list, in cascade order — every rule in the app is in exactly one
+ * of these files, and the file it is in is named after the thing it styles.
+ * Vite inlines these at build time, so this costs nothing at runtime.
+ *
+ * The order is load-bearing in one direction only: tokens before anything
+ * that reads them, reset before anything that overrides it. Past that,
+ * selectors do not collide across files, so components can be reordered
+ * without changing what renders.
+ *
+ *   tokens/      values, no selectors of their own beyond :root. Change a
+ *                token here and it changes everywhere at once.
+ *   base/        the unstyled document: webfonts, reset, type roles, motion.
+ *   layout/      the frame the pages sit in.
+ *   components/  one file per reusable piece of interface.
+ *   charts/      the plot surface — its box, its lines, its tooltip.
+ *   pages/       what is true only on one route.
+ */
+
+/* --- Tokens -------------------------------------------------------------- */
+/* Scales first: the themes and the series palette are colour only, and both
+   are written against the measurements defined here. */
+@import './tokens/scales.css';
+@import './tokens/theme-light.css';
+@import './tokens/theme-dark.css';
+@import './tokens/series.css';
+@import './tokens/breakpoints.css';
+
+/* --- Base ---------------------------------------------------------------- */
+@import './base/fonts.css';
+@import './base/reset.css';
+@import './base/type-roles.css';
+@import './base/motion.css';
+
+/* --- Layout -------------------------------------------------------------- */
+@import './layout/app.css';
+@import './layout/sidebar.css';
+
+/* --- Components ---------------------------------------------------------- */
+@import './components/header.css';
+@import './components/button.css';
+@import './components/status.css';
+@import './components/readout.css';
+@import './components/message.css';
+@import './components/markdown.css';
+@import './components/streaming.css';
+@import './components/panel.css';
+@import './components/trace.css';
+@import './components/error.css';
+@import './components/empty.css';
+@import './components/composer.css';
+@import './components/view-switch.css';
+@import './components/range-picker.css';
+@import './components/room-select.css';
+@import './components/meter.css';
+
+/* --- Charts -------------------------------------------------------------- */
+/* `card` is the box a plot sits in — its frame, heading, and the states it
+   shows when there is nothing to draw. `chart` is the plot itself. */
+@import './charts/card.css';
+@import './charts/chart.css';
+@import './charts/tooltip.css';
+
+/* --- Pages --------------------------------------------------------------- */
+@import './pages/chat.css';
+@import './pages/dashboard.css';
+@import './pages/mission.css';
+@import './pages/plan-editor.css';
+@import './pages/logbook.css';
+@import './pages/settings.css';
+@import './pages/nomenclature.css';

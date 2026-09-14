@@ -1,0 +1,62 @@
+# =============================================================================
+# Habitat profile — a mission running on PostgreSQL / TimescaleDB (or MySQL)
+# =============================================================================
+#
+# A template for connecting ATLAS to an EXISTING relational telemetry database
+# without migrating your data. You describe your table's columns in the
+# `sql_mapping` section below; ATLAS maps its measurement/location/field/time/
+# value model onto them. Nothing in the core application changes.
+#
+#   # .env
+#   DATA_SOURCE=sql
+#   SQL_DSN=postgresql://user:pass@dbhost:5432/habitat
+#   HABITAT_CONFIG=config/examples/postgres_habitat.yaml
+#
+# Install a driver for your database (ATLAS uses the stdlib DB-API, so only the
+# driver is needed, not an ORM):
+#   PostgreSQL / TimescaleDB:  pip install 'psycopg[binary]'   (or psycopg2-binary)
+#   MySQL / MariaDB:           pip install pymysql
+
+name: My Postgres Habitat
+
+location_tag_keys:
+  - Location
+
+internal_prefixes: []
+zone_names: {}          # add {tag_value: "Human Name"} if your rooms are coded
+non_summable_fields: []
+
+# Units are still not discoverable from the database, so declare them here as
+# for any habitat. measurement -> field -> unit.
+units:
+  temperature:
+    value: "°C"
+  humidity:
+    value: "%"
+  co2:
+    value: ppm
+  power:
+    value: W
+
+# --- How your table maps onto ATLAS's model ---------------------------------
+# Example table (yours will differ — just point the columns at it):
+#
+#   CREATE TABLE sensor_readings (
+#       sensor_id    text,
+#       room         text,           -- the place
+#       metric_type  text,           -- "temperature", "co2", ...
+#       ts           timestamptz,    -- or bigint epoch, or ISO text
+#       value        double precision
+#   );
+sql_mapping:
+  table: sensor_readings
+  measurement_column: metric_type
+  location_column: room          # optional — omit if the table has no place
+  # field_column:                # optional — omit if each row is a single value
+  time_column: ts
+  value_column: value
+  # How the time column is stored:
+  #   epoch     numeric Unix seconds (most efficient — bounds push into SQL)
+  #   datetime  a native TIMESTAMP column
+  #   iso       ISO 8601 text
+  time_encoding: datetime

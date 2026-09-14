@@ -1,0 +1,248 @@
+# =============================================================================
+# Habitat profile — Demo Analog Habitat (SQLite)
+# =============================================================================
+#
+# A complete worked example: a fictional station with its own rooms and sensors,
+# served from a SQLite file instead of InfluxDB/Grafana.
+# It exists to prove ATLAS is database- and habitat-agnostic — run it with:
+#
+#   python scripts/seed_demo_sqlite.py            # build config/examples/demo_habitat.db
+#   DATA_SOURCE=sqlite \
+#   SQLITE_PATH=config/examples/demo_habitat.db \
+#   HABITAT_CONFIG=config/examples/demo_habitat.yaml \
+#   python -m uvicorn app.main:app --reload
+#
+# The room names here are the `location` values stored in the database, so no
+# translation table is needed — a zone_names mapping is only for habitats whose
+# database tags places by code (a habitat whose sleeping quarters are tagged
+# `Container3` or `2B` would map that to "Dormitory" here, or rename it live on
+# the Naming page).
+
+name: Demo Analog Habitat
+
+# The SQLite adapter reports its `location` column under the first key here.
+location_tag_keys:
+  - Location
+
+internal_prefixes: []
+
+# The location values already read as human names, so this is left empty.
+zone_names: {}
+
+non_summable_fields: []
+
+units:
+  Temperature:
+    value: "°C"
+  Humidity:
+    value: "%"
+  CO2:
+    value: ppm
+  Power:
+    value: W
+  Energy:
+    total_kwh: kWh
+  Water:
+    litres: L
+
+# --- Locations that are not rooms ---------------------------------------------
+# The tanks and the whole-habitat meter live in the same `location` column as the
+# rooms, so they are named here and left out of every per-room chart.
+non_room_locations:
+  - CleanWaterTank
+  - GreyWaterTank
+  - Habitat
+
+# --- Consumption rollup tags --------------------------------------------------
+# `Habitat` is the whole-habitat mains meter: a total of the room submeters, so
+# it must never be summed with them.
+aggregate_tag_values:
+  - habitat
+
+# --- Instrument noise floors --------------------------------------------------
+# The tank gauges dither by a few tenths of a litre while the tank sits still.
+# Differencing a level amplifies that, so movements below 1 L are not counted.
+noise_floors:
+  Water:
+    litres: 1.0
+
+# --- Stocks (tanks and stores) ------------------------------------------------
+# `role` is what makes the answer correct: on the SUPPLY tank the fall is what
+# the crew used; on the WASTE tank the rise is what the habitat produced.
+stocks:
+  - key: clean_water
+    label: Clean water
+    role: supply
+    measurement: Water
+    field: litres
+    tags: { Location: CleanWaterTank }
+    noun: drawn from the clean water tank
+  - key: grey_water
+    label: Grey water
+    role: waste
+    measurement: Water
+    field: litres
+    tags: { Location: GreyWaterTank }
+    noun: produced into the grey water tank
+
+# --- Dashboard --------------------------------------------------------------
+# The panels THIS habitat draws. Omit this whole section and ATLAS derives a
+# catalogue from whatever the database holds. Panels whose measurement/field the
+# database does not hold are hidden automatically, so this is a wish list, not a
+# promise.
+#
+# A panel whose id starts with `room_` is a per-room chart (Room analysis view);
+# others are whole-habitat (Habitat consumption view).
+dashboard_panels:
+  - id: room_temperature
+    title: Temperature by room
+    subtitle: Averaged across every sensor in the room
+    measurement: Temperature
+    field: value
+    group_by: Location
+    group: Environment
+  - id: room_humidity
+    title: Humidity by room
+    subtitle: Relative humidity, averaged per room
+    measurement: Humidity
+    field: value
+    group_by: Location
+    group: Environment
+  - id: room_co2
+    title: CO₂ by room
+    subtitle: Carbon dioxide concentration, averaged per room
+    measurement: CO2
+    field: value
+    group_by: Location
+    group: Environment
+  - id: room_power
+    title: Power draw by room
+    subtitle: Instantaneous draw of each room's submeter
+    measurement: Power
+    field: value
+    group_by: Location
+    group: Power
+  - id: room_energy_used
+    title: Energy used by room
+    subtitle: Energy used in each interval, per room totaliser
+    measurement: Energy
+    field: total_kwh
+    group_by: Location
+    mode: delta
+    chart: bar
+    group: Power
+
+  # --- Water: the two tanks every habitat cares about ------------------------
+  # The clean tank is a SUPPLY stock, so its FALL is consumption and a delivery
+  # is not negative use — hence `drawdown` rather than `delta`. The grey tank is
+  # a WASTE stock: its RISE is what the habitat produced. `deadband: auto` uses
+  # the 1 L noise floor declared above, so gauge dither is not read as use.
+  - id: clean_water_level
+    title: Clean water level
+    subtitle: Tank contents in the water store
+    measurement: Water
+    field: litres
+    tags: { Location: CleanWaterTank }
+    chart: area
+    group: Water
+  - id: clean_water_consumption
+    title: Clean water consumed
+    subtitle: >-
+      How far the level fell in each interval. A refill counts as zero use, not
+      negative use.
+    measurement: Water
+    field: litres
+    tags: { Location: CleanWaterTank }
+    mode: drawdown
+    chart: bar
+    deadband: auto
+    group: Water
+  - id: clean_water_consumption_total
+    title: Clean water used, running total
+    subtitle: The bars to the left, added up from the start of the window
+    measurement: Water
+    field: litres
+    tags: { Location: CleanWaterTank }
+    mode: drawdown
+    chart: area
+    deadband: auto
+    cumulative: true
+    group: Water
+  - id: grey_water_level
+    title: Grey water level
+    subtitle: Waste tank contents
+    measurement: Water
+    field: litres
+    tags: { Location: GreyWaterTank }
+    chart: area
+    group: Water
+  - id: grey_water_produced
+    title: Grey water produced
+    subtitle: >-
+      How far the level rose in each interval. Pumping out counts as zero
+      production.
+    measurement: Water
+    field: litres
+    tags: { Location: GreyWaterTank }
+    mode: fillup
+    chart: bar
+    deadband: auto
+    group: Water
+
+  # --- Whole-habitat power ---------------------------------------------------
+  - id: habitat_power
+    title: Habitat power draw
+    subtitle: The whole-habitat meter, rooms plus shared plant
+    measurement: Power
+    field: value
+    tags: { Location: Habitat }
+    chart: line
+    group: Power
+  - id: habitat_energy
+    title: Habitat energy consumed
+    subtitle: >-
+      Whole-habitat totaliser, differenced per interval: energy used in each
+      bucket, not the meter's running total.
+    measurement: Energy
+    field: total_kwh
+    tags: { Location: Habitat }
+    mode: delta
+    chart: bar
+    group: Power
+
+# --- Mission plan resources ---------------------------------------------------
+# What the mission budgets and tracks. Water is read from the clean tank's FALL
+# (kind: stock); power from the whole-habitat totaliser's CLIMB (kind:
+# cumulative). A habitat that budgets only one of them lists only that one.
+day_start_offset_minutes: 0
+
+mission_resources:
+  - key: water
+    label: Clean water
+    noun: drawn from the clean water tank
+    kind: stock
+    measurement: Water
+    field: litres
+    tags: { Location: CleanWaterTank }
+    default_daily: 120.0
+  - key: power
+    label: Habitat power
+    noun: through the whole-habitat meter
+    kind: cumulative
+    measurement: Energy
+    field: total_kwh
+    tags: { Location: Habitat }
+    default_daily: 90.0
+
+# --- Crew meter log -----------------------------------------------------------
+# This habitat's hand-read round: a short one, deliberately different from any
+# other station's. The crew can add, rename or remove dials in the interface.
+crew_log_meters:
+  power:
+    - { key: greenhouse,   label: Greenhouse }
+    - { key: robotics_bay, label: Robotics Bay }
+    - { key: dormitory,    label: Dormitory }
+  water:
+    - { key: shower_warm, label: "Shower · warm", code: W1, group: shower, group_label: Showers, stream: warm }
+    - { key: shower_cold, label: "Shower · cold", code: C1, group: shower, group_label: Showers, stream: cold }
+    - { key: galley_cold, label: "Galley · cold", code: C2, group: kitchen, group_label: Galley, stream: cold }

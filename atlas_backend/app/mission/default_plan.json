@@ -1,0 +1,5 @@
+{
+  "note": "Starting figures only \u2014 not any mission's plan. They are used solely to offer a first guess at a ceiling when you declare a mission: a length times the figure below, shown in the box before you save it. Real per-resource defaults belong in the habitat profile's mission_resources (default_daily), which override these. Nothing is stored until you save.",
+  "day_start_offset_minutes": 0,
+  "daily": {}
+}

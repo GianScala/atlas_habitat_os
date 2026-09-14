@@ -1,0 +1,725 @@
+/* --------------------------------------------------------------------------
+   Mission plan
+
+   The one view carrying numbers nobody measured. It borrows the dashboard's
+   card, grid, and group rules wholesale — a budget card and a chart card are
+   the same object with different contents, and a row of them has to line up
+   along its tops and its bottoms either way.
+
+   What it adds is the meter, and one more use of the three instrument
+   colours. Everything else here is the same monochrome as the rest of the
+   chrome, so a coloured pixel on this page is still always a claim.
+   -------------------------------------------------------------------------- */
+
+.mission {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* The view's own controls. The strip above belongs to the panels, which this
+   view has none of, so its settings and actions sit with its content. */
+.mission__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.mission__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* The resources are wrapped so they can be held back as one. The wrapper
+   carries the spacing `.mission` used to give them directly, so the gap
+   between water and power does not depend on whether they are current. */
+.mission__resources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Said once, at the top: every percentage below is measured against a figure
+   we picked rather than one the crew set. */
+.mission__banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--warn-soft);
+  box-shadow: 0 0 0 1px var(--warn);
+}
+
+.mission__banner svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+  color: var(--warn);
+}
+
+.mission__banner > div {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.mission__banner-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--warn);
+}
+
+.mission__banner-text {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+/* Where the three horizons of one resource disagree with each other. Advice,
+   not a failure — hence a rule and not a filled block. */
+.mission__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-muted);
+  border-left: 2px solid var(--warn);
+  background: var(--bg-raised);
+}
+
+.mission__warning svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+  color: var(--warn);
+}
+
+.mission__history {
+  margin-top: 1px;
+}
+
+/* A DEFINITE height, not the grid's min-height.
+   The chart library sizes itself to 100% of this box, and a percentage
+   against a parent whose height is `auto` resolves to auto — which is zero
+   before the chart has drawn anything, so it never draws anything. The panel
+   cards escape that by being grid items, which get a definite height from
+   their row. This card stands alone under its budgets and has no row to take
+   one from, so it states its own. */
+.mission__history .panel-chart__plot {
+  height: 15rem;
+}
+
+/* --- One budget --- */
+
+.budget {
+  gap: 0;
+}
+
+.budget__head {
+  margin-bottom: var(--space-3);
+}
+
+/* The sentence that carries both figures. Two lines reserved, so three cards
+   in a row keep their figure blocks on the same line. */
+.budget__headline {
+  min-height: 3em;
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.budget__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* The share of the budget spent. Large, because it is the answer; toned,
+   because the answer is a status. */
+.budget__figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.budget__figure--ok { color: var(--ok); }
+.budget__figure--warn { color: var(--warn); }
+.budget__figure--bad { color: var(--danger); }
+.budget__figure--mute { color: var(--text-faint); }
+
+.budget__figure-unit {
+  font-size: var(--text-2xs);
+  font-weight: 400;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.budget__pace {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Four figures, two columns. The sentence above was built from these, and
+   this is where someone checks it. */
+.budget__figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.budget__figure-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  min-width: 0;
+}
+
+.readout__value--bad {
+  color: var(--danger);
+}
+
+.budget__foot {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+}
+
+.budget__flag {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  color: var(--warn);
+}
+
+.budget__flag svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+}
+
+.budget__note {
+  margin-top: var(--space-2);
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+
+/* --- The forward plan ---
+
+   The one number on this page a crew can act on: what a day may cost from
+   here. Above the cards that explain it, and set apart from them, because a
+   reader who stops after this line has the whole of the answer. */
+
+.mission__forward {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg-raised);
+  border-left: 2px solid var(--series-3);
+}
+
+/* The plan no longer closes. Not a warning about a trend — a statement that
+   no daily figure exists that would work, which is the most important thing
+   this page can ever say. */
+.mission__forward--bad {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-left-color: var(--danger);
+}
+
+.mission__forward svg {
+  flex: 0 0 auto;
+  margin-top: 0.2em;
+}
+
+.mission__reset {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  text-align: right;
+}
+
+/* --- The ring ---
+
+   A part-to-whole with one part and a hero number in the middle. Sized in rem
+   so it scales with the type, and centred in a square so three of them in a
+   row sit on one line whatever their captions say. */
+
+.ring {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+}
+
+.ring__svg {
+  width: 9.25rem;
+  height: 9.25rem;
+  overflow: visible;
+}
+
+.ring__arc--ok { stroke: var(--ok); }
+.ring__arc--warn { stroke: var(--warn); }
+.ring__arc--bad { stroke: var(--danger); }
+.ring__arc--mute { stroke: var(--text-faint); }
+
+/* Where the plan expected to be by now. Drawn across the track rather than
+   along it: the question is which side of it the arc ends on, and a mark that
+   shares the arc's direction would be read as part of it. */
+.ring__tick {
+  stroke: var(--chart-cursor);
+  stroke-width: 2;
+}
+
+/* Absolutely placed rather than a flex child, so the figure is centred on the
+   ring's own centre and not on the box the SVG happens to occupy. */
+.ring__centre {
+  position: absolute;
+  top: 4.6rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.ring__figure {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.ring__figure--ok { color: var(--ok); }
+.ring__figure--warn { color: var(--warn); }
+.ring__figure--bad { color: var(--danger); }
+.ring__figure--mute { color: var(--text-faint); }
+
+.ring__caption {
+  margin-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.ring__chip {
+  margin-top: var(--space-2);
+}
+
+/* --- The day plan --- */
+
+.mission__history .panel-chart__plot {
+  height: 16rem;
+}
+
+/* A legend that names series rather than filtering them: nothing here is
+   toggleable, so it must not offer a pointer or a hover state. */
+.legend__item--static {
+  cursor: default;
+}
+
+.day-legend {
+  margin-top: var(--space-3);
+}
+
+.day-legend__key {
+  flex: 0 0 auto;
+  width: 0.875rem;
+}
+
+.day-legend__bar {
+  height: 0.625rem;
+  background: var(--series-1);
+}
+
+.day-legend__bar--over {
+  background: var(--danger);
+}
+
+.day-legend__line {
+  height: 0;
+  border-top: 2px solid var(--chart-cursor);
+}
+
+.day-legend__line--revised {
+  border-top-style: dashed;
+  border-top-color: var(--series-3);
+}
+
+/* --- The day table ---
+
+   The chart's accessible twin, and where a figure is actually read off. Scrolls
+   in its own box so a narrow window never scrolls the page sideways. */
+
+.dayplan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dayplan__scroll {
+  overflow-x: auto;
+}
+
+.dayplan__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-xs);
+}
+
+.dayplan__caption {
+  padding-bottom: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.dayplan__table th,
+.dayplan__table td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.dayplan__table thead th {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.dayplan__num {
+  font-family: var(--font-mono);
+  text-align: right;
+}
+
+/* The forward plan's column, tinted to match its line on the chart above. */
+.dayplan__num--revised {
+  color: var(--series-3);
+}
+
+.dayplan__code {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.dayplan__date,
+.dayplan__extras {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* A day already lived, held back from the days still in play. */
+.dayplan__row--past .dayplan__code,
+.dayplan__row--past .dayplan__date {
+  color: var(--text-faint);
+}
+
+.dayplan__row--today {
+  background: var(--bg-raised);
+}
+
+.dayplan__row--today .dayplan__code {
+  color: var(--series-1);
+}
+
+/* Not zero. A dash the reader can hover to find out which kind of nothing. */
+.dayplan__absent {
+  color: var(--text-faint);
+  cursor: help;
+}
+
+/* --- The extras --- */
+
+.extras {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--bg-panel);
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+.extras__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.extras__head > div {
+  flex: 1 1 24rem;
+  min-width: 0;
+}
+
+.extras__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.extras__lede {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.extras__empty {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+.extras__list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.extras__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border);
+}
+
+.extras__item--editing {
+  display: block;
+  padding-bottom: 0;
+}
+
+.extras__when {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 6rem;
+}
+
+.extras__code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.extras__code--stranded {
+  color: var(--warn);
+  text-decoration: line-through;
+}
+
+.extras__stranded {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-2xs);
+  color: var(--warn);
+}
+
+.extras__body {
+  flex: 1 1 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.extras__label {
+  font-size: var(--text-sm);
+}
+
+.extras__note {
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+
+.extras__amount {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.extras__per {
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+
+.extras__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.extras__total {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* --- The extra form ---
+
+   The same fields whether it is adding or editing, so the thing that made a
+   row and the thing that changes it look like one control. */
+
+.extra-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-raised);
+}
+
+.extra-form__field {
+  flex: 1 1 8rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.extra-form__field--grow {
+  flex: 2 1 14rem;
+}
+
+.extra-form__error,
+.extra-form__actions {
+  flex: 1 1 100%;
+}
+
+.extra-form__actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* --- The setup form ---
+
+   Three facts and two ceilings. Wider fields than the old grid of six boxes,
+   because each one now carries a sentence saying what it does to the rest. */
+
+.setup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--bg-panel);
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+.setup__title {
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+.setup__subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.setup__lede {
+  margin-top: var(--space-2);
+  max-width: 60ch;
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.setup__fields,
+.setup__ceilings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.setup__ceilings {
+  flex-direction: column;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.setup__field {
+  flex: 1 1 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  max-width: 32rem;
+}
+
+.setup__field--wide {
+  flex: 1 1 22rem;
+}
+
+.setup__label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.setup__control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.setup__note {
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  color: var(--text-faint);
+}

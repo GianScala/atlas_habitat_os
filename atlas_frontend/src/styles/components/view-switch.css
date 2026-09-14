@@ -1,0 +1,59 @@
+/* --- View switch: which half of the dashboard is on screen ---
+
+   The same segmented form as the range picker below it, because both are
+   "pick exactly one" — but bordered in the heavy rule rather than the
+   hairline, since this one decides what the rest of the strip is about. */
+
+.views {
+  display: flex;
+  border: 1px solid var(--rule);
+}
+
+.view {
+  padding: var(--space-1) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-muted);
+  border-left: 1px solid var(--border);
+  transition: color 0.1s linear, background 0.1s linear;
+}
+
+.view:first-child {
+  border-left: none;
+}
+
+.view:hover {
+  color: var(--text);
+  background: var(--bg-raised);
+}
+
+.view--on,
+.view--on:hover {
+  color: var(--text-inverse);
+  background: var(--accent);
+}
+
+
+/* On compact dashboards this is primary navigation, so it fills the row and
+   gives every destination an equal, comfortable touch target. */
+@media (max-width: 900px) {
+  .filter-row__switch,
+  .views {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .view {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.6875rem;
+    line-height: 1.25;
+    white-space: normal;
+  }
+}

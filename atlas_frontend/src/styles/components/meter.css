@@ -1,0 +1,127 @@
+/* --- Status chip ---
+
+   A word, not a dot. Three states that have to be told apart at a glance and
+   also read correctly in greyscale or by someone who cannot separate the
+   hues, so each carries its own text. */
+
+.chip {
+  flex: 0 0 auto;
+  padding: 0.125rem var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.chip--ok {
+  color: var(--ok);
+  background: var(--ok-soft);
+  box-shadow: inset 0 0 0 1px var(--ok);
+}
+
+.chip--warn {
+  color: var(--warn);
+  background: var(--warn-soft);
+  box-shadow: inset 0 0 0 1px var(--warn);
+}
+
+.chip--bad {
+  color: var(--danger);
+  background: var(--danger-soft);
+  box-shadow: inset 0 0 0 1px var(--danger);
+}
+
+.chip--mute {
+  color: var(--text-faint);
+  background: var(--bg-raised);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+/* --- The meter ---
+
+   Fill is the budget spent; the rule across it is the period elapsed. The
+   card exists to show which side of the rule the fill ends on. */
+
+.meter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.meter__track {
+  position: relative;
+  height: 1.25rem;
+  background: var(--bg-inset);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  overflow: hidden;
+}
+
+.meter__fill {
+  height: 100%;
+  transition: width 0.2s linear;
+}
+
+.meter__fill--ok { background: var(--ok); }
+.meter__fill--warn { background: var(--warn); }
+.meter__fill--bad { background: var(--danger); }
+.meter__fill--mute { background: var(--border-strong); }
+
+/* Drawn over the fill in the page's ink rather than in a fourth colour: it is
+   a mark on the scale, not a status of its own. */
+.meter__pace {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--text);
+  box-shadow: 0 0 0 1px var(--bg-panel);
+}
+
+.meter__scale {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.meter__legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Each figure under the mark it belongs to, so neither has to be traced back
+   up to the bar. */
+.meter__key {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+}
+
+.meter__key--ok { background: var(--ok); }
+.meter__key--warn { background: var(--warn); }
+.meter__key--bad { background: var(--danger); }
+.meter__key--mute { background: var(--border-strong); }
+
+.meter__key--pace {
+  width: 2px;
+  height: 10px;
+  background: var(--text);
+}
+
+.meter__end {
+  flex: 0 0 auto;
+}

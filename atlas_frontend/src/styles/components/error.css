@@ -1,0 +1,40 @@
+/* --------------------------------------------------------------------------
+   Errors
+   -------------------------------------------------------------------------- */
+
+.error {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--danger);
+  background: var(--danger-soft);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border-left-width: 3px;
+}
+
+.error__icon {
+  flex: 0 0 auto;
+  margin-top: 0.15em;
+}
+
+.error__body {
+  min-width: 0;
+}
+
+.error__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* What is still on screen despite the failure, and how old it is. A refresh
+   that fails does not delete the last good reading, so the notice has to say
+   what the charts underneath it are — otherwise they read as current. */
+.error__aside {
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
+}
