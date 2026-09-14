@@ -7,7 +7,7 @@ using an answer for an operational decision.
 
 ![ATLAS answering a question about clean water use, with the query it ran](docs/images/atlas-chat.png)
 
-Created and maintained by **Gianmarco Scalabrin**, the project's main contributor.
+Created and maintained by [**GianScala**](https://github.com/GianScala), the project's main contributor.
 Community contributions are welcome.
 
 **Release scope:** a shared application for a trusted crew, with synthetic demo

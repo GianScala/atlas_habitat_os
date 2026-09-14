@@ -4,8 +4,8 @@ Use an issue to describe a substantial proposal, or submit a focused pull
 request for a bug fix. Explain the resulting behavior and provide a small
 synthetic reproduction. Be respectful; discuss the code and evidence.
 
-The project is maintained by **Gianmarco Scalabrin**, its creator and main
-contributor. Additional contributors are credited through Git history.
+The project is maintained by [**GianScala**](https://github.com/GianScala), its
+creator and main contributor. Additional contributors are credited through Git history.
 
 ## Development
 
