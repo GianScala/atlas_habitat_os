@@ -49,7 +49,7 @@ def check(path, data):
         reasons.append("private habitat reference")
     if any(pattern.search(data) for pattern in SECRETS):
         reasons.append("possible credential")
-    if p.suffix.lower() in ASSETS and not path.startswith("atlas_frontend/public/"):
+    if p.suffix.lower() in ASSETS and not path.startswith(("atlas_frontend/public/", "docs/images/")):
         reasons.append("unreviewed asset location")
     if b"\0" in data and p.suffix.lower() not in ASSETS:
         reasons.append("unreviewed binary")
