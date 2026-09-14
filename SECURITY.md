@@ -17,7 +17,7 @@ process memory, disk and concurrency limits in the deployment environment.
 
 ## Data handling
 
-Never contribute Lunares data, derived private habitat profiles, credentials,
+Never contribute real habitat data, derived private habitat profiles, credentials,
 mission records, crew information, real chat transcripts or operational
 screenshots. Use synthetic reproductions. Put private profiles in
 `atlas_backend/config/private/`; keep runtime state outside your public checkout

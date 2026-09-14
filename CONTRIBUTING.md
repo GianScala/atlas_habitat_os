@@ -23,7 +23,7 @@ schemas. New network database adapters need independent read-only credentials.
 ## What belongs in a contribution
 
 Code, documentation, original assets and independently synthetic fixtures belong
-here. Lunares records and configurations, private calibration values, renamed
+here. Real habitat records and configurations, private calibration values, renamed
 mission exports, screenshots of actual operations and credentials do not.
 Keep local profiles under `atlas_backend/config/private/`, not `config/examples/`.
 The public examples are intentionally synthetic or generic templates.
