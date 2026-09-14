@@ -170,7 +170,8 @@ Prerequisites: **Python 3.11+**, **Node 22.12+**, and (for the default local mod
 cd atlas_backend
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-cp .env.example .env      # then edit — see Configuration below
+cp .env.example .env
+.venv/bin/python scripts/seed_demo_sqlite.py  # generate synthetic demo telemetry
 ```
 
 **Frontend**
@@ -232,8 +233,8 @@ Set in `atlas_backend/.env` (copy from `.env.example`). The essentials:
 
 | Variable | What it does |
 | --- | --- |
-| `DATA_SOURCE` | Which adapter connects to the habitat: `grafana` (default) or `influxdb`. |
-| `HABITAT_CONFIG` | Path to the habitat profile YAML. There is no default habitat — set it. |
+| `DATA_SOURCE` | Which adapter connects to the habitat: `sqlite` (template default), `grafana`, `influxdb` or `sql`. |
+| `HABITAT_CONFIG` | Path to the habitat profile YAML. The template selects the synthetic demo habitat. |
 | `GRAFANA_URL` | Grafana adapter: base URL of the habitat Grafana. |
 | `GRAFANA_TOKEN` *or* `GRAFANA_USER`/`GRAFANA_PASS` | Grafana adapter: credentials (token wins). |
 | `GRAFANA_DATASOURCE_UID` | Grafana adapter: the InfluxDB datasource to query. |
@@ -244,8 +245,8 @@ Set in `atlas_backend/.env` (copy from `.env.example`). The essentials:
 | `ANTHROPIC_API_KEY` | Only if you want the cloud option. Running locally needs no key. |
 | `CORS_ORIGINS` | Browser origins allowed to call the API (the Vite dev server is 5173). |
 
-`.env.example` documents every variable, including the Ollama, Anthropic, and
-HTTP-service tunables, each with a working default. **Never commit `.env`** — it
+`.env.example` contains common settings. See [configuration](docs/configuration.md)
+for setup details and advanced options. **Never commit `.env`** — it
 holds credentials and is git-ignored.
 
 ### The habitat profile

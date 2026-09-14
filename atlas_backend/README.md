@@ -108,15 +108,14 @@ app/
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 cp .env.example .env
+.venv/bin/python scripts/seed_demo_sqlite.py
 ```
 
-Fill in `.env`. With the default `DATA_SOURCE=grafana`: a Grafana token **or**
-user/pass (token wins), plus `GRAFANA_URL` and `GRAFANA_DATASOURCE_UID`. To
-connect InfluxDB directly instead, set
-`DATA_SOURCE=influxdb` and the `INFLUX_*` variables. `HABITAT_CONFIG` points at
-your habitat profile — there is no default habitat, so set it.
-`ANTHROPIC_API_KEY` is needed only if you want the cloud option — running
-locally needs no key.
+The template selects the synthetic SQLite demo; the seed command creates its
+ignored telemetry database. To connect your own habitat, change `DATA_SOURCE`,
+its connection settings and `HABITAT_CONFIG`. See
+[configuration](../docs/configuration.md) for adapters and advanced options.
+`ANTHROPIC_API_KEY` is needed only for cloud inference.
 
 Install [Ollama](https://ollama.com/download) and start it (`ollama serve`, or
 open the app). Models are installed from the Models page in the interface.

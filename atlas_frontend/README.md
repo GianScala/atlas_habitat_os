@@ -303,11 +303,11 @@ CORS never applies.
 ## Configuration
 
 Everything is optional; the defaults work for local development. See
-`.env.example`.
+`.env.example` and the [configuration guide](../docs/configuration.md).
 
 | Variable            | Purpose |
 | ------------------- | ------- |
-| `VITE_API_TARGET`   | What the dev-server proxy forwards `/api` to. Default `http://127.0.0.1:8000`. |
+| `VITE_API_TARGET`   | Shell variable for the dev-server proxy (not read from `.env.local`). Default `http://127.0.0.1:8000`. |
 | `VITE_API_BASE_URL` | Where the backend lives. Set only when serving the built bundle from a different origin than the API — then add that origin to the backend's `CORS_ORIGINS`. |
 
 ## Deploying the built bundle
