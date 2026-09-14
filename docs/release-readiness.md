@@ -39,10 +39,10 @@ synthetic fixtures, bundled font notices and the authenticated Caddy template.
 
 ## Follow-up cleanup and attribution
 
-- Added Gianmarco Scalabrin as creator, main contributor and maintainer in the
-  README, NOTICE, contribution guide and project metadata. The application
-  copyright notice names him alongside ATLAS contributors; third-party notices
-  are preserved.
+- Added GianScala as creator, main contributor and maintainer in the README,
+  NOTICE, contribution guide and project metadata. The application copyright
+  notice names that handle alongside ATLAS contributors; third-party notices are
+  preserved.
 - Removed three unused `_full.png` logo backups, the obsolete logo generator and
   a local speech session artifact. Removed the deleted SVG from the index and
   fixed its stale favicon reference. Current logo assets remain in use.

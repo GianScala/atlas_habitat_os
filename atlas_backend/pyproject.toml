@@ -3,8 +3,8 @@ name = "atlas-backend"
 version = "1.0.0"
 description = "Habitat telemetry assistant — grounded, read-only, streaming."
 requires-python = ">=3.11"
-authors = [{name = "Gianmarco Scalabrin"}]
-maintainers = [{name = "Gianmarco Scalabrin"}]
+authors = [{name = "GianScala"}]
+maintainers = [{name = "GianScala"}]
 license = "Apache-2.0"
 
 [tool.pytest.ini_options]
