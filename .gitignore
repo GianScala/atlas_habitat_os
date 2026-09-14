@@ -5,22 +5,35 @@
 *.swp
 *~
 
-# Editor state
+# Local editor and AI-assistant state, at any depth.
 .idea/
 .vscode/
+.claude/
+.codex/
+.agents/
+.cursor/
+.aider*
 *.iml
 
-# Secrets — the .env.example files are the ones that get committed.
+# Environment files are private; only sanitized examples are public.
 .env
-.env.local
-.env.*.local
-
-# Per-machine tool state. launch.json is shared; the local settings are not.
-.claude/settings.local.json
-
-# All environment variants are private except explicit templates.
 .env.*
 !.env.example
+
+# Private keys and common local credential stores.
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+secrets.json
+secrets.yaml
+secrets.yml
+.aws/
+.ssh/
 # Runtime data and exports, regardless of which component creates them.
 *.db
 *.db-*
@@ -42,9 +55,27 @@
 /exports/
 /backups/
 
-# Python caches from repository maintenance scripts.
+# Dependencies and generated state, including tools run from the repo root.
+node_modules/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.cache/
+.vite/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+*.tsbuildinfo
 
 # Local speech runtime session artifacts.
 *.ses

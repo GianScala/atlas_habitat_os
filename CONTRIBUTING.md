@@ -34,6 +34,11 @@ Before publishing, inspect `git diff --cached` and run:
 python3 scripts/check_release.py --staged --history
 ```
 
+Local AI/editor directories (including `.claude/`, `.codex/` and `.cursor/`)
+are excluded from the public source. Keep `.github/` and `.githooks/`: these
+contain shared CI and release safeguards. Inspect `git diff --cached` even
+after using `git add .`; ignore rules cannot detect secrets pasted into code.
+
 The script is a guardrail, not proof of provenance. CI also runs it, but CI on a
 public repository happens after publication, so local inspection is mandatory.
 If data was accidentally committed, stop before pushing. If it was already
