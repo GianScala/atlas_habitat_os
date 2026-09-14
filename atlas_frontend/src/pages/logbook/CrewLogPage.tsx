@@ -61,9 +61,9 @@ export function CrewLogPage({ onClose }: CrewLogPageProps) {
   } = useLogbook()
 
   // The habitat's own account of the same days, for the check at the bottom.
-  // Its own hook, its own cache, its own failure: Grafana being unreachable
-  // costs this page one card and nothing else, which matters because reading
-  // dials by hand is exactly what a crew does when the telemetry is down.
+  // Its own hook, its own cache, its own failure: an unreachable habitat
+  // database costs this page one card and nothing else, which matters because
+  // reading dials by hand is exactly what a crew does when telemetry is down.
   const { tracking } = useMission()
 
   const [resourceKey, setResourceKey] = useState<'power' | 'water'>('power')

@@ -81,7 +81,11 @@ class ToolResultEvent(BaseModel):
 
 
 class SourcesEvent(BaseModel):
-    """The InfluxQL behind the answer, for the provenance footer."""
+    """The queries behind the answer, for the provenance footer.
+
+    Each is rendered in the active adapter's own dialect, so the text varies by
+    data source.
+    """
 
     type: Literal["sources"] = "sources"
     queries: list[str] = []

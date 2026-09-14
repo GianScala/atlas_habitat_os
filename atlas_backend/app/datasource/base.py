@@ -1,24 +1,23 @@
-"""The data-source interface — ATLAS Core's one seam to a habitat database.
+"""The data-source interface - ATLAS Core's one seam to a habitat database.
 
     ATLAS Core -> DataSource (this interface) -> adapter -> habitat database
 
 The telemetry layer talks to the habitat only through this interface, and it
 does so at TWO levels:
 
-  * the STRUCTURED level (`run` + the discovery methods) — database-neutral.
+  * the STRUCTURED level (`run` + the discovery methods) - database-neutral.
     The telemetry layer builds a `Query` (see `query.py`) and every adapter can
     answer it, whatever its dialect. This is the level that makes ATLAS work on
     InfluxDB, SQLite, Postgres, or anything else.
 
-  * the RAW level (`influxql`) — an InfluxQL string straight through. A few
-    advanced analyses (tank-flow reconciliation, the charting time-series) are
-    still expressed as InfluxQL and run only on adapters that declare the
-    `raw_influxql` capability. Porting them to the structured level is what
-    makes them database-agnostic too; until then the tools that need them are
-    offered only when the active adapter supports them.
+  * the RAW level (`influxql`) - an InfluxQL string straight through, offered
+    only by adapters that declare the `raw_influxql` capability. Nothing in the
+    request path uses it: every tool, tank-flow and the charting time-series
+    included, goes through the structured level. It exists for the
+    InfluxQL-specific diagnostic scripts in `scripts/`, which speak to a
+    habitat's own Grafana or InfluxDB server directly.
 
-Adapters advertise what they can do with `capabilities`, and the tool registry
-offers the model only the tools its data source can actually answer.
+Adapters advertise what they can do with `capabilities`.
 """
 
 from abc import ABC, abstractmethod
@@ -90,8 +89,9 @@ class DataSource(ABC):
     ) -> dict:
         """Run a raw InfluxQL string. Only adapters with CAP_RAW_INFLUXQL."""
         raise CapabilityError(
-            f"{self.label} does not accept raw InfluxQL. This capability "
-            "(tank-flow, charts) needs an InfluxQL-speaking data source."
+            f"{self.label} does not accept raw InfluxQL. Only the InfluxQL "
+            "adapters do, and only the diagnostic scripts ask for it. No "
+            "telemetry tool needs it."
         )
 
     # --- configuration / identity -----------------------------------------

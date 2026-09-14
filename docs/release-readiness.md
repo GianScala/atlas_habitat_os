@@ -1,14 +1,16 @@
 # Release readiness review
 
-Reviewed 2026-09-14. This is an engineering review, not a guarantee of security,
-privacy provenance or production capacity.
+A snapshot of the engineering review performed on 2026-09-14, immediately before
+the first public commit. It is kept as a record of what was and was not checked
+at that point. It is not a guarantee of security, privacy provenance or
+production capacity, and it does not describe commits made after that date.
 
-## Current assessment
+## Assessment at the time of review
 
-The source is a candidate for an open-source release after the publication gates
-below. It is not certified production-ready or a 10/10 security assessment.
-The supported deployment is one backend process for a trusted crew behind an
-authenticated gateway, not an anonymous public API.
+The source was judged a candidate for an open-source release once the
+publication gates below were met. It is not certified production-ready or a
+10/10 security assessment. The supported deployment is one backend process for a
+trusted crew behind an authenticated gateway, not an anonymous public API.
 
 This pass inspected repository structure, API/security boundaries, data adapters,
 storage, document handling, voice processing, frontend transport, tests, CI,
@@ -56,14 +58,18 @@ synthetic fixtures, bundled font notices and the authenticated Caddy template.
 - npm audit and pip-audit (base plus optional voice requirements) report no known
   vulnerabilities. This is a point-in-time advisory check, not an exploit audit.
 - The worktree and refreshed exact-index release guards pass for the cleaned
-  release candidate. There are no commits, so the history scan currently has
-  no history to inspect.
+  release candidate. The repository had no commits at that point, so the
+  history scan had no history to inspect. Commits made since then are covered
+  only by the guard runs performed on them.
 - No ignored `.env`, local database, uploaded document or speech session file was
   copied into the clean source candidate.
 - No commit, push or deployment was performed in this review. Live browser,
   microphone, model-provider and production-gateway behavior was not re-tested.
 
 ## Publication gates
+
+These were the conditions set for the first public commit. Gate 1 remains
+standing practice for every later change.
 
 1. Review the staged release and run
    `python3 scripts/check_release.py --staged --history` before committing. The
@@ -74,9 +80,10 @@ synthetic fixtures, bundled font notices and the authenticated Caddy template.
    the application uses the already bundled OFL-licensed Michroma font instead.
    A private backup of the unused font was kept outside the repository.
 3. Confirm all retained fixtures, numerical examples and original artwork are
-   independently shareable. No Lunares name or common credential pattern was
-   found in the original index. Renamed or unlabeled private data cannot be ruled
-   out by pattern scanning; this review cannot establish historical authorship.
+   independently shareable. No private habitat name or common credential
+   pattern was found in the original index. Renamed or unlabeled private data
+   cannot be ruled out by pattern scanning; this review cannot establish
+   historical authorship.
 4. Enable GitHub private vulnerability reporting and secret scanning/push protection
    where available, and require CI before merging. CI on a public repository runs
    after publication, so it cannot replace local pre-publication checks.

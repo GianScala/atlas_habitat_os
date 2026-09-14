@@ -1,35 +1,37 @@
 # ATLAS - a habitat-agnostic telemetry assistant for analog space missions
 
-Created and maintained by **Gianmarco Scalabrin**, the project’s main contributor.
+Ask questions about your analog space habitat's telemetry in plain English.
+ATLAS queries habitat telemetry while you wait and asks the model to cite its
+sources. Model answers can still be wrong; check the cited readings before
+using an answer for an operational decision.
+
+![ATLAS answering a question about clean water use, with the query it ran](docs/images/atlas-chat.png)
+
+Created and maintained by **Gianmarco Scalabrin**, the project's main contributor.
 Community contributions are welcome.
 
 **Release scope:** a shared application for a trusted crew, with synthetic demo
 data. Remote deployments require authentication in front of the whole site.
 See [deployment](docs/deployment.md), [security and privacy](SECURITY.md),
 [contribution guidelines](CONTRIBUTING.md) and [release status](docs/release-readiness.md).
-Lunares data and private mission configurations must never be included in this
-repository. Public source code does not make an operational instance public-safe.
-
-
-Ask questions about your analog space habitat's telemetry in plain English.
-ATLAS queries habitat telemetry while you wait and asks the model to cite its
-sources. Model answers can still be wrong; check the cited readings before
-using an answer for an operational decision.
+Real habitat data and private mission configurations must never be included in
+this repository. Public source code does not make an operational instance
+public-safe.
 
 ATLAS is built to be **deployed by any analog mission**, not one habitat. Which
 database it reads, what its rooms are called, and what units its sensors carry
-are all *configuration* — a data-source adapter and a habitat profile — not code
+are all *configuration* - a data-source adapter and a habitat profile - not code
 you have to fork.
 
 ```
 atlas_analog_habitats/
-├── atlas_backend/    FastAPI service — the agent loop, data-source adapters,
+├── atlas_backend/    FastAPI service - the agent loop, data-source adapters,
 │                      and habitat data access
 └── atlas_frontend/   React + TypeScript chat, dashboard, and mission views
 ```
 
 The model that reads the telemetry and writes the answer **runs on this machine**
-by default, under [Ollama](https://ollama.com/download) — no API key, nothing
+by default, under [Ollama](https://ollama.com/download) - no API key, nothing
 about a question leaving the habitat. Claude over the Anthropic API is one click
 away on the Models page if you want it.
 
@@ -37,10 +39,11 @@ away on the Models page if you want it.
 
 ## The problem it solves
 
-An analog habitat is wired with dozens of sensors streaming into a time-series
-database, usually behind Grafana. The data is all there, but *asking* it a
-question means writing a query, knowing the schema, and knowing which meter is
-which. During a mission nobody has time for that.
+An analog habitat is wired with dozens of sensors streaming into some database:
+a time-series store, a Grafana-fronted InfluxDB, a Postgres table, a file on a
+laptop. The data is all there, but *asking* it a question means writing a query,
+knowing the schema, and knowing which meter is which. During a mission nobody
+has time for that.
 
 ATLAS puts a grounded natural-language layer in front of that database. The crew
 asks "how much water did we use yesterday?" and gets a cited figure, run live,
@@ -50,19 +53,58 @@ inventing a dimension.
 
 ## Main use cases
 
-- **In-mission situational awareness** — power, water, air quality, per-room
+- **In-mission situational awareness** - power, water, air quality, per-room
   conditions, "are we on plan?", asked conversationally.
-- **Consumption against a declared mission plan** — budgets and allowances the
+- **Consumption against a declared mission plan** - budgets and allowances the
   crew set, compared to what was actually drawn.
-- **A reusable platform** — a new analog mission points ATLAS at its own
+- **A reusable platform** - a new analog mission points ATLAS at its own
   database with an adapter and a habitat profile, and gets the same assistant.
 
 ## Who it's for
 
 - **Analog missions** deploying ATLAS for their own habitat (start with
   [Deploying for your mission](#deploying-atlas-for-your-mission)).
-- **Contributors** extending it — new data-source adapters, new query
+- **Contributors** extending it - new data-source adapters, new query
   capabilities (start with [Extending ATLAS](#extending-atlas)).
+
+---
+
+## The interface
+
+Every screenshot below is the bundled SQLite demo habitat, running with no
+InfluxDB and no cloud model. `scripts/seed_demo_sqlite.py` builds the same data
+on your machine.
+
+### Habitat consumption
+
+Water and mains power for the habitat as a whole. Each panel names the
+measurement behind it, and "Source" opens the query that drew it.
+
+![The habitat consumption dashboard: clean water level, consumption per interval, and a running total](docs/images/atlas-dashboard.png)
+
+### Room analysis
+
+Temperature, humidity, CO₂ and power draw per room, for the rooms you select.
+The room list is discovered from the database, not configured.
+
+![Room analysis: temperature, humidity and CO2 plotted per room over 24 hours](docs/images/atlas-room-analysis.png)
+
+### Mission plan
+
+Consumption against the ceilings the crew declared, for today, the current
+cycle, and the whole mission. A day the sensors did not cover is reported as a
+gap in the record rather than as a day of zero use.
+
+![The mission plan view: clean water use against plan for today, the cycle and the mission](docs/images/atlas-mission-plan.png)
+
+### Crew meter log
+
+The second, independent account: sub-meter dials read by hand. It is the only
+source that knows which room drew the power or which tap drew the water, and it
+says plainly how much of the round is still missing rather than quietly totalling
+what it has.
+
+![The crew meter log: power by room from hand-taken readings, with missing rounds reported](docs/images/atlas-crew-log.png)
 
 ---
 
@@ -84,15 +126,15 @@ actual connecting. Grafana is one adapter, not a dependency.
              ┌─────────────────┼───────────────────┐
              ▼                 ▼                   ▼
      ┌───────────────┐ ┌───────────────┐ ┌───────────────────┐
-     │ Grafana proxy │ │ InfluxDB      │ │ SQLite / your      │
-     │ (InfluxQL)    │ │ (InfluxQL)    │ │ adapter (any DB)   │
+     │ SQLite        │ │ SQL (mapped)  │ │ InfluxDB /         │
+     │ (SQL)         │ │ (SQL)         │ │ Grafana (InfluxQL) │
      └───────┬───────┘ └───────┬───────┘ └─────────┬─────────┘
              ▼                 ▼                   ▼
-        Habitat Grafana   Habitat InfluxDB    SQLite / Postgres / …
+        a local file      Postgres / MySQL    Habitat InfluxDB
 ```
 
-The seam is a **structured, dialect-neutral `Query`** — a measurement, a field,
-an aggregate, a time window — not a query string. Each adapter renders it into
+The seam is a **structured, dialect-neutral `Query`** - a measurement, a field,
+an aggregate, a time window - not a query string. Each adapter renders it into
 its own language (InfluxQL for the InfluxDB adapters, SQL for SQLite), so the
 telemetry layer, the tools, and the API are identical whatever backend answers.
 
@@ -102,22 +144,22 @@ code:
 | What | Where | Chosen by |
 | --- | --- | --- |
 | **Which database** and how to reach it | `app/datasource/` adapters | `DATA_SOURCE` + connection env vars |
-| **What the habitat is** — rooms, units, tag names, display name | `config/examples/*.yaml` (a *habitat profile*) | `HABITAT_CONFIG` |
+| **What the habitat is** - rooms, units, tag names, display name | `config/examples/*.yaml` (a *habitat profile*) | `HABITAT_CONFIG` |
 
-Everything discoverable — the measurement names, the fields, the tag values — is
+Everything discoverable - the measurement names, the fields, the tag values - is
 still read live from the database at runtime and is never hardcoded.
 
 ### How the model talks to the database
 
-The model never writes a query. It calls a **semantic tool API** —
-`get_latest`, `summarize`, `get_consumption`, and so on — and the telemetry
+The model never writes a query. It calls a **semantic tool API** -
+`get_latest`, `summarize`, `get_consumption`, and so on - and the telemetry
 layer turns each call into a structured `Query`. The InfluxDB adapters render
 that `Query` to InfluxQL; the SQLite adapter renders it to SQL and aggregates in
 Python. Adding a backend means teaching one adapter to render the `Query` in its
-own dialect — see
+own dialect - see
 [Writing a new data-source adapter](#writing-a-new-data-source-adapter).
 
-Every read path — including the dashboard charts and tank-flow analysis — runs
+Every read path - including the dashboard charts and tank-flow analysis - runs
 through the structured `Query`, so all of it works on any adapter. The tool set
 itself is **habitat-driven**: `get_tank_flow` is offered only when the habitat
 profile declares `stocks`, and `get_latest_all_phases` only when it
@@ -131,14 +173,17 @@ applicable tool set from configuration alone.
 ```
 atlas_backend/
 ├── app/
-│   ├── datasource/        the data-source seam — Grafana never leaks past here
+│   ├── datasource/        the data-source seam - no adapter leaks past here
 │   │   ├── base.py          the DataSource interface
-│   │   ├── wire.py          shared InfluxDB read-only + response parsing
-│   │   ├── grafana.py       Grafana-proxy adapter (the reference/default)
+│   │   ├── query.py         the structured, dialect-neutral Query
+│   │   ├── sqlite.py        local SQLite adapter (the default; best worked example)
+│   │   ├── sql.py           mapped SQL adapter (Postgres/MySQL/Timescale)
 │   │   ├── influxdb.py      direct InfluxDB 1.x adapter
-│   │   └── __init__.py      the registry: influxql() + get_data_source()
+│   │   ├── grafana.py       Grafana-proxy adapter
+│   │   ├── wire.py          shared InfluxDB read-only + response parsing
+│   │   └── __init__.py      the registry: get_data_source()
 │   ├── habitat/           the habitat profile loader (zones, units, names)
-│   ├── telemetry/         builds InfluxQL, parses series; no transport knowledge
+│   ├── telemetry/         builds the Query, reads series; no transport knowledge
 │   ├── tools/             the model's vocabulary, bound to telemetry functions
 │   ├── mission/           the crew's plan and hand-read meter log (SQLite)
 │   ├── llm/               model providers: Ollama (local) and Anthropic (cloud)
@@ -146,11 +191,11 @@ atlas_backend/
 │   ├── api/               FastAPI routes
 │   ├── storage/           chat-history persistence (SQLite)
 │   └── config.py          all configuration, read once from the environment
-├── config/examples/      habitat profiles — habitat.example.yaml documents them all
-├── scripts/              connection/diagnostic scripts (Grafana-specific)
+├── config/examples/      habitat profiles - habitat.example.yaml documents them all
+├── scripts/              the demo seeder, plus InfluxQL connection diagnostics
 └── tests/                unit tests, no network required
 
-atlas_frontend/          React + TypeScript (Vite) — chat, dashboard, mission
+atlas_frontend/          React + TypeScript (Vite) - chat, dashboard, mission
 ```
 
 Each half has its own README with component-level detail
@@ -188,7 +233,7 @@ npm install
 ollama serve              # or just open the Ollama app
 ```
 
-Nothing needs pulling by hand — the Models page installs whatever model you pick.
+Nothing needs pulling by hand - the Models page installs whatever model you pick.
 
 ---
 
@@ -197,12 +242,12 @@ Nothing needs pulling by hand — the Models page installs whatever model you pi
 Two terminals:
 
 ```bash
-# terminal 1 — backend (hot reload)
+# terminal 1 - backend (hot reload)
 cd atlas_backend && .venv/bin/python -m uvicorn app.main:app --reload
 ```
 
 ```bash
-# terminal 2 — frontend (hot reload)
+# terminal 2 - frontend (hot reload)
 cd atlas_frontend && npm run dev
 ```
 
@@ -233,7 +278,7 @@ Set in `atlas_backend/.env` (copy from `.env.example`). The essentials:
 
 | Variable | What it does |
 | --- | --- |
-| `DATA_SOURCE` | Which adapter connects to the habitat: `sqlite` (template default), `grafana`, `influxdb` or `sql`. |
+| `DATA_SOURCE` | Which adapter connects to the habitat: `sqlite` (the default), `sql`, `influxdb` or `grafana`. |
 | `HABITAT_CONFIG` | Path to the habitat profile YAML. The template selects the synthetic demo habitat. |
 | `GRAFANA_URL` | Grafana adapter: base URL of the habitat Grafana. |
 | `GRAFANA_TOKEN` *or* `GRAFANA_USER`/`GRAFANA_PASS` | Grafana adapter: credentials (token wins). |
@@ -246,7 +291,7 @@ Set in `atlas_backend/.env` (copy from `.env.example`). The essentials:
 | `CORS_ORIGINS` | Browser origins allowed to call the API (the Vite dev server is 5173). |
 
 `.env.example` contains common settings. See [configuration](docs/configuration.md)
-for setup details and advanced options. **Never commit `.env`** — it
+for setup details and advanced options. **Never commit `.env`** - it
 holds credentials and is git-ignored.
 
 ### The habitat profile
@@ -261,33 +306,23 @@ to write one; `config/examples/habitat.example.yaml` documents every option.
 
 ## Connecting a habitat database
 
-### Option A — Grafana proxy (default)
+No adapter is privileged. Pick the one that matches the database you already
+have; each is one implementation of the same interface, and nothing in ATLAS
+above the adapter changes with your choice.
 
-If your telemetry is behind Grafana (the common case), let Grafana hold the
-InfluxDB credentials and proxy ATLAS's queries.
+### Option A - SQLite (the default)
 
-```bash
-DATA_SOURCE=grafana
-GRAFANA_URL=http://<your-grafana-host>
-GRAFANA_TOKEN=<service-account-token>     # or GRAFANA_USER / GRAFANA_PASS
-GRAFANA_DATASOURCE_UID=<uid>
-```
-
-If the datasource uid is wrong, `python scripts/discover_datasources.py` finds
-the right one; `python scripts/check_connection.py` confirms the whole path.
-
-### Option B — direct InfluxDB
-
-If you can reach InfluxDB 1.x directly, skip Grafana entirely.
+A local file in the canonical schema. This is what `DATA_SOURCE` falls back to
+when it is unset, what `.env.example` selects, and what the demo and every
+screenshot above run on. See
+[Try it with zero InfluxDB](#try-it-with-zero-influxdb-the-sqlite-demo).
 
 ```bash
-DATA_SOURCE=influxdb
-INFLUX_URL=http://<your-influx-host>:8086
-INFLUX_TOKEN=<token>                       # or INFLUX_USER / INFLUX_PASS
-INFLUX_DB=<database-name>
+DATA_SOURCE=sqlite
+SQLITE_PATH=config/examples/demo_habitat.db
 ```
 
-### Option C — a SQL database (PostgreSQL / MySQL / TimescaleDB)
+### Option B - a SQL database (PostgreSQL / MySQL / TimescaleDB)
 
 If your telemetry already lives in a relational database, connect it **without
 migrating your data**. You describe your table's columns in the habitat
@@ -300,7 +335,7 @@ HABITAT_CONFIG=config/examples/postgres_habitat.yaml
 ```
 
 ```yaml
-# in the habitat profile — point these at YOUR columns
+# in the habitat profile - point these at YOUR columns
 sql_mapping:
   table: sensor_readings
   measurement_column: metric_type     # "temperature", "co2", …
@@ -315,20 +350,43 @@ Install just the driver you need (ATLAS uses the stdlib DB-API, no ORM):
 for MySQL. A full template is
 [`config/examples/postgres_habitat.yaml`](atlas_backend/config/examples/postgres_habitat.yaml).
 
-### Option D — SQLite
+### Option C - direct InfluxDB
 
-A local file in the canonical schema — the offline demo, and the simplest path
-for a small habitat. See [Try it with zero InfluxDB](#try-it-with-zero-influxdb-the-sqlite-demo).
+If you can reach InfluxDB 1.x directly, connect to it and skip Grafana.
+
+```bash
+DATA_SOURCE=influxdb
+INFLUX_URL=http://<your-influx-host>:8086
+INFLUX_TOKEN=<token>                       # or INFLUX_USER / INFLUX_PASS
+INFLUX_DB=<database-name>
+```
+
+### Option D - Grafana proxy to InfluxDB
+
+If your telemetry sits behind Grafana, let Grafana hold the InfluxDB
+credentials and proxy ATLAS's queries, so ATLAS needs no InfluxDB token of its
+own.
+
+```bash
+DATA_SOURCE=grafana
+GRAFANA_URL=http://<your-grafana-host>
+GRAFANA_TOKEN=<service-account-token>     # or GRAFANA_USER / GRAFANA_PASS
+GRAFANA_DATASOURCE_UID=<uid>
+```
+
+If the datasource uid is wrong, `python scripts/discover_datasources.py` finds
+the right one; `python scripts/check_connection.py` confirms the whole path.
+Both scripts speak InfluxQL and apply to these last two adapters only.
 
 ### Supported data-source adapters
 
 | Adapter | `DATA_SOURCE` | Backend | Status |
 | --- | --- | --- | --- |
-| Grafana proxy → InfluxDB | `grafana` | InfluxDB 1.x via Grafana | Shipped (reference) |
-| InfluxDB 1.x (direct) | `influxdb` | InfluxDB HTTP API | Shipped |
-| SQLite | `sqlite` | a local `.db` file | Shipped (also the offline demo) |
+| SQLite | `sqlite` | a local `.db` file | Shipped (the default, and the offline demo) |
 | SQL (PostgreSQL / MySQL / TimescaleDB) | `sql` | any relational DB, via a config mapping | Shipped |
-| MongoDB / REST / other | *your name* | any store | Via a new adapter — see below |
+| InfluxDB 1.x (direct) | `influxdb` | InfluxDB HTTP API | Shipped |
+| Grafana proxy → InfluxDB | `grafana` | InfluxDB 1.x via Grafana | Shipped |
+| MongoDB / REST / other | *your name* | any store | Via a new adapter - see below |
 
 ### Try it with zero InfluxDB (the SQLite demo)
 
@@ -348,8 +406,8 @@ SQLITE_PATH=config/examples/demo_habitat.db
 HABITAT_CONFIG=config/examples/demo_habitat.yaml
 ```
 
-That habitat — a Greenhouse, Robotics Bay, Medical Bay, Science Lab, Crew
-Quarters, a Dormitory and an Airlock, with its own clean and grey water tanks — is
+That habitat - a Greenhouse, Robotics Bay, Medical Bay, Science Lab, Crew
+Quarters, a Dormitory and an Airlock, with its own clean and grey water tanks - is
 served from a plain SQLite file. Ask it "what's the temperature in the
 greenhouse?" or "how much energy did the robotics bay use over 3 days?" and the
 answers are queried live, cited, and grounded, exactly as on InfluxDB.
@@ -362,8 +420,8 @@ answers are queried live, cited, and grounded, exactly as on InfluxDB.
 
 ATLAS Core talks to a database through a **structured, dialect-neutral
 interface**, not through SQL or InfluxQL strings. The telemetry layer builds a
-[`Query`](atlas_backend/app/datasource/query.py) object — a measurement, a
-field, an aggregate, a time window, a grouping — and your adapter renders it into
+[`Query`](atlas_backend/app/datasource/query.py) object - a measurement, a
+field, an aggregate, a time window, a grouping - and your adapter renders it into
 *your* database's language. That is why adding PostgreSQL, MySQL, or a REST API
 is a self-contained adapter and never a change to core logic.
 
@@ -403,9 +461,10 @@ Then **register it** in `app/datasource/__init__.py`:
 
 ```python
 ADAPTERS = {
-    "grafana": _make_grafana,
-    "influxdb": _make_influxdb,
     "sqlite": _make_sqlite,
+    "sql": _make_sql,
+    "influxdb": _make_influxdb,
+    "grafana": _make_grafana,
     "mybackend": _make_mybackend,   # <- one line
 }
 ```
@@ -413,8 +472,8 @@ ADAPTERS = {
 and **select it** with `DATA_SOURCE=mybackend`, adding whatever connection
 settings it needs to `config.py` and `.env.example`. No caller changes.
 
-**Every read path is database-agnostic.** All tools — including the dashboard
-charts and the tank-flow reconciliation — ride the structured `run()` path, so
+**Every read path is database-agnostic.** All tools - including the dashboard
+charts and the tank-flow reconciliation - ride the structured `run()` path, so
 they work on any adapter. What varies is the *tool set*, which is driven by the
 habitat profile, not the database: `get_tank_flow` is offered only when the
 profile declares `stocks`, and `get_latest_all_phases` only when it
@@ -437,7 +496,7 @@ The backend is organized so each kind of change has one home:
 | Declare this habitat's rooms / units | `zone_names:` / `units:` in the profile |
 | Declare tanks or a phased meter (adds those tools) | `stocks:` / `electrical:` in the profile |
 | Add a query capability (tool) | `app/telemetry/`, then `app/tools/schemas.py` + `registry.py` |
-| Support another model runtime | `app/llm/` — write a `Provider`, list it in `providers.py` |
+| Support another model runtime | `app/llm/` - write a `Provider`, list it in `providers.py` |
 | Change how ATLAS answers | `app/services/prompt.py` and `app/services/style.py` |
 | Add or change a dashboard chart | `app/services/dashboard.py` |
 
@@ -448,7 +507,7 @@ The [backend README](atlas_backend/README.md) has the full map.
 ## Deploying ATLAS for your mission
 
 A new analog mission gets ATLAS running against its own habitat **without
-editing any application code** — two files and a run command.
+editing any application code** - two files and a run command.
 
 1. **Install** (see [Installation](#installation)).
 
@@ -474,7 +533,7 @@ editing any application code** — two files and a run command.
      CO2:         { value: ppm }
    ```
 
-   Everything else (measurement names, fields, tag values) is discovered live —
+   Everything else (measurement names, fields, tag values) is discovered live -
    leave it out. You can also skip `zone_names` entirely and rename rooms from
    **Settings → Database nomenclature** once ATLAS is running: it lists every
    location and dataset it found in your database and lets you give each one a
@@ -483,8 +542,8 @@ editing any application code** — two files and a run command.
 3. **Point `.env` at your database and profile:**
 
    ```bash
-   DATA_SOURCE=grafana                       # or influxdb
-   GRAFANA_URL=...                           # your connection settings
+   DATA_SOURCE=sql                           # or sqlite, influxdb, grafana
+   SQL_DSN=...                               # your connection settings
    HABITAT_CONFIG=config/private/my_mission.yaml
    ```
 
@@ -497,7 +556,7 @@ editing any application code** — two files and a run command.
 
 That's the whole port. The mission plan (start date, length, consumption
 ceilings) and answer style are set later from the interface and stored in the
-database — not in any file you edit.
+database - not in any file you edit.
 
 ### Running it for real
 
@@ -514,7 +573,7 @@ frontend is actually served, and terminate TLS in front of it.
 
 Two things are deliberately empty until you set them:
 
-- **No mission plan.** The Dashboard's Mission view opens on a setup form — a
+- **No mission plan.** The Dashboard's Mission view opens on a setup form - a
   start date, a length in days, and the most water and power the mission may
   draw. Until then, ATLAS answers "how are we doing against plan?" by saying no
   plan has been set, rather than comparing against a figure nobody chose.
@@ -531,7 +590,7 @@ The answer style starts on **Concise**; change it on the Settings page.
 - **Grounding is a design goal, not a guarantee.** Models are instructed to use
   query results; independently check answers against their cited sources. The helpers return an explicit "no data" rather than a value.
 - **No invented absence.** ATLAS may not say a sensor doesn't exist unless it
-  searched — and it says what it searched.
+  searched - and it says what it searched.
 - **Nothing about the schema is hardcoded.** Measurements, tags, and fields are
   discovered from the database at runtime; only the units and human names live
   in the habitat profile.
@@ -540,23 +599,23 @@ The answer style starts on **Concise**; change it on the Settings page.
 
 ## Contributing
 
-Contributions are welcome — new adapters, new habitat profiles, new query
+Contributions are welcome - new adapters, new habitat profiles, new query
 capabilities, UI improvements. A good first PR is an adapter for the database
 your mission runs, or a habitat profile you can share.
 
 - Keep the data-source seam intact: core code reaches the database only through
   `app.datasource`. If you find yourself importing an adapter by name
   outside `app/datasource/`, that's the smell to avoid.
-- Add tests — the suite runs offline (`pytest`), and the parsing/arithmetic
+- Add tests - the suite runs offline (`pytest`), and the parsing/arithmetic
   paths are where quiet bugs hide.
 - Run `ruff` (configured in `pyproject.toml`).
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE). ATLAS is meant to be deployed and
+Apache License 2.0 - see [LICENSE](LICENSE). ATLAS is meant to be deployed and
 reused by any analog mission, and the license is chosen for that: use it, modify
 it, ship it, with the patent grant and attribution the license asks for.
 
 Keep credentials and mission data out of every commit. `.env`, the chat-history
 database, and anything under `atlas_backend/knowledge/` are gitignored for that
-reason — the `.env.example` files are the ones that get committed.
+reason - the `.env.example` files are the ones that get committed.

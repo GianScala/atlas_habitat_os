@@ -131,7 +131,7 @@ def _parse(text: str) -> dict[str, Any]:
 
 
 def _queries_of(payload: dict[str, Any]) -> list[str]:
-    """The InfluxQL a tool result reports having run."""
+    """The queries a tool result reports having run, in the adapter's dialect."""
     found = payload.get("queries") or [payload.get("query")]
     return [q for q in found if isinstance(q, str) and q]
 

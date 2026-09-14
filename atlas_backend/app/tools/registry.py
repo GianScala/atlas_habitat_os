@@ -39,6 +39,10 @@ log = get_logger(__name__)
 TOOL_REQUIRES: dict[str, "Callable[[], bool]"] = {
     "get_tank_flow": lambda: bool(profile().stock_measurements),
     "get_latest_all_phases": lambda: bool(profile().electrical),
+    # The crew meter log is optional equipment: no declared dials, no second
+    # account to read. Offering it to a habitat that keeps one account sends
+    # per-room questions to a tool with nothing in it.
+    "get_crew_meter_log": lambda: bool(profile().crew_log_meters),
     # Offered only once the crew has attached a document. A search tool over an
     # empty store is a round the model spends learning there is nothing there.
     "search_knowledge": lambda: connected_count() > 0,
@@ -87,7 +91,7 @@ class ToolOutcome:
 
     @property
     def queries(self) -> list[str]:
-        """The InfluxQL this call actually ran."""
+        """The queries this call actually ran, in the adapter's own dialect."""
         if self.is_error:
             return []
         found = self.raw.get("queries") or [self.raw.get("query")]

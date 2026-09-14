@@ -1,7 +1,7 @@
 """The crew's own meter log: what a hand-read dial says, room by room and tap by tap.
 
 WHY THIS EXISTS. Everything else on the dashboard comes from the habitat's
-sensors through Grafana: one mains meter, one clean-water feed. That tells a
+sensors: one mains meter, one clean-water feed. That tells a
 crew how much the habitat drew and nothing whatever about WHERE. The sub-meters
 that would answer that are dials on a wall, so the answer arrives the only way
 it can — somebody walks the rounds with a clipboard twice a day and writes the
@@ -309,7 +309,7 @@ def build_logbook(plan: Plan, readings: list[dict[str, Any]]) -> dict[str, Any]:
     """The whole crew-log page: the sheet, the deltas, and the distributions.
 
     Pure arithmetic over what is on disk — no habitat database is touched, so
-    this page still works when Grafana is down, which is precisely when a crew
+    this page still works when that database is down, which is precisely when a crew
     is most likely to be reading dials by hand.
     """
     now = datetime.now(UTC)
