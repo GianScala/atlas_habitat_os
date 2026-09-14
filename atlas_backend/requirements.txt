@@ -13,7 +13,7 @@ pyyaml==6.0.3
 # Embeddings are produced by the LOCAL Ollama runtime, so there is no API
 # client here and nothing to pay for.
 pypdf==6.16.1
-python-docx==1.1.2
+python-docx==1.2.0
 python-multipart==0.0.31
 
 # Optional — only for DATA_SOURCE=sql against a networked database. The SQL
