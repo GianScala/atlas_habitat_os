@@ -123,13 +123,11 @@ export function CrewLogPage({ onClose }: CrewLogPageProps) {
           <Warning size={15} />
           <div>
             <p className="mission__banner-title">
-              There is no mission to log against yet
+              Add a mission before logging readings
             </p>
             <p className="mission__banner-text">
-              One row per mission day, MD-01 to the last.
-              so it needs a mission's start date and length before it has any
-              rows to offer. Declare one on the Mission plan view, and the sheet
-              appears with a row for every planned day.
+              Set a start date and duration in Mission plan. The sheet will then
+              have a row for each mission day, starting at MD-01.
             </p>
           </div>
         </div>
@@ -153,8 +151,8 @@ export function CrewLogPage({ onClose }: CrewLogPageProps) {
       />
 
       <p className="log__lede">
-        Where the habitat's consumption actually goes, from the readings the
-        crew takes by hand.
+        See consumption by room or tap from manual meter readings. Enter dial
+        totals in The sheet below; ATLAS calculates the amount used between rounds.
       </p>
 
       {/* Which sheet is on screen. Power and water are metered by different
@@ -199,7 +197,7 @@ export function CrewLogPage({ onClose }: CrewLogPageProps) {
             <div className="error__title">Could not re-read the log</div>
             <div>{error}</div>
             <div className="error__aside">
-              The figures below are the last ones that did arrive.
+              Showing the last successfully loaded readings.
             </div>
           </div>
         </div>
@@ -349,7 +347,7 @@ export function CrewLogPage({ onClose }: CrewLogPageProps) {
                   measured across the mission so far.
                 </>
               )}{' '}
-              A day with no bar is a day nobody has closed.
+              Missing readings leave gaps. Incomplete days show only the use recorded so far.
             </p>
           </header>
 
@@ -373,8 +371,7 @@ export function CrewLogPage({ onClose }: CrewLogPageProps) {
           <ChevronRight className="panel__chevron" />
           <span className="panel__label">The sheet</span>
           <span className="panel__hint">
-            where the rounds are written down. Every figure above is derived
-            from these boxes and nothing else
+            enter cumulative dial readings; usage is calculated automatically
           </span>
         </summary>
         <div className="panel__body">
@@ -384,8 +381,7 @@ export function CrewLogPage({ onClose }: CrewLogPageProps) {
             {confirmingClear ? (
               <>
                 <span className="log__clear-ask">
-                  Delete every {resource.key} reading in this log? The rounds
-                  behind them cannot be walked again.
+                  Delete all manual {resource.key} readings? This cannot be undone.
                 </span>
                 <button
                   type="button"

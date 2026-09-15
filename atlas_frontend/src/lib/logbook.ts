@@ -31,15 +31,12 @@ export const BLOCK_LABEL: Record<BlockStatus, string> = {
 export const BLOCK_HINT: Record<BlockStatus, string> = {
   ok: 'Derived from this reading and the one that closes it.',
   open:
-    'Waiting on the reading that closes it. This is not a quiet block — it ' +
-    'is a block nobody has finished measuring yet.',
+    'Waiting for a closing reading; consumption is not yet known.',
   gap:
-    'Both rounds have been walked and one of the two readings was never ' +
-    'written down. Somebody has to go and read the dial.',
+    'A required reading is missing. Check the original record for this round.',
   backwards:
-    'The closing reading is lower than the opening one. A meter face counts ' +
-    'up, so one of the two figures is mistyped — and until it is fixed, both ' +
-    'are left out of every total on this page.',
+    'The closing reading is lower than the opening reading. Check for an ' +
+    'entry error or meter reset. This interval is excluded from totals.',
 }
 
 /**
@@ -105,13 +102,13 @@ export function coverageReading(resource: LogResource): string {
     return 'No rounds have come due yet — the sheet fills in as the mission runs.'
   }
   if (filled >= expected) {
-    return `Every round walked so far is written down: ${filled} of ${expected}.`
+    return `All ${expected} expected readings are recorded.`
   }
   const missing = expected - filled
   return (
-    `${filled} of ${expected} rounds written down. ${missing} ` +
-    `${missing === 1 ? 'reading is' : 'readings are'} missing, and every block ` +
-    'either side of one of those is left out of the figures below.'
+    `${filled} of ${expected} expected readings recorded. ${missing} ` +
+    `${missing === 1 ? 'reading is' : 'readings are'} missing. ` +
+    'Intervals without both readings are excluded from totals.'
   )
 }
 
@@ -134,8 +131,8 @@ export function windowCaveat(window: LogWindow, resource: LogResource): string |
   }
   if (!window.complete) {
     return (
-      'Provisional. At least one block here is still waiting on the reading ' +
-      'that closes it, so this total can only go up.'
+      'Incomplete: some intervals are missing readings. This total covers ' +
+      'only the intervals recorded so far.'
     )
   }
   return null

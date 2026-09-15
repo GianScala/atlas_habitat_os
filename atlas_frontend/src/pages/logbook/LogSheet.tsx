@@ -312,11 +312,10 @@ function DaySheet({
       <div className="sheet__scroll">
         <table className="sheet__table sheet__table--day">
           <caption className="sheet__caption">
-            {day.code} · the two left columns are what the DIAL SAID, in{' '}
-            {resource.entry_unit}. The two right columns are what was USED
-            between those readings, in {resource.unit}. Daytime is the morning
-            round to the evening round, overnight is the evening round to
-            tomorrow morning's.
+            {day.code} · Enter cumulative dial readings in {resource.entry_unit}.
+            Calculated use is shown in {resource.unit}: morning to evening
+            for daytime, evening to the next morning for overnight.
+            Press Enter or leave a field to save.
           </caption>
           <thead>
             {/* Two headers, because the table is two different things side by
@@ -326,14 +325,14 @@ function DaySheet({
             <tr className="sheet__super">
               <th scope="col" />
               <th scope="col" colSpan={resource.slots.length}>
-                Readings off the dial
+                Dial readings
               </th>
               <th
                 scope="col"
                 colSpan={resource.slots.length + 1}
                 className="sheet__super--derived"
               >
-                Consumption between them
+                Calculated consumption
               </th>
             </tr>
             <tr>
@@ -455,8 +454,7 @@ function DayTotal({ blocks, unit }: { blocks: (BlockUsage | undefined)[]; unit: 
       <span
         className="sheet__derived sheet__derived--open"
         title={
-          'Both blocks need their readings before a day has a total. One ' +
-          'block on its own is half a day, not a quiet one.'
+          'A full-day total needs morning, evening, and the next morning’s readings.'
         }
       />
     )

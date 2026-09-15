@@ -75,9 +75,9 @@ export function ExtrasPanel({
         <div>
           <h4 className="extras__title">Extras</h4>
           <p className="extras__lede">
-            Consumption you know about in advance. Booking one takes it out of
-            the mission's ceiling and puts it on the day it happens, so every
-            other day's allowance drops to pay for it. The total never moves.
+            Reserve part of your budget for planned activities, on one day or
+            every day. Extras reduce the regular daily allowance; they do not
+            increase the total mission budget.
           </p>
         </div>
 

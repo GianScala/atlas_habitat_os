@@ -61,10 +61,8 @@ export function ReconcileCard({ check, resource, meterLabel }: ReconcileCardProp
           </span>
         </div>
         <p className="card__subtitle">
-          The crew's sub-meters against {meterLabel.toLowerCase()} in the
-          database, over the mission days both accounts closed. Two independent
-          measurements of the same habitat — which is the only reason putting
-          them side by side proves anything.
+          Manual readings compared with {meterLabel.toLowerCase()}, using only
+          completed mission days covered by both records.
         </p>
       </header>
 

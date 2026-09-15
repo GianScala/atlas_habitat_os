@@ -89,7 +89,7 @@ export function MissionSetup({
       event.preventDefault()
 
       if (!start) {
-        setLocalError('Give the mission a first day. Everything is counted from it.')
+        setLocalError('Choose the mission start date.')
         return
       }
       if (!Number.isInteger(length) || length < 1) {
@@ -131,11 +131,9 @@ export function MissionSetup({
           {declared ? 'Change the mission' : 'Add a mission plan'}
         </h2>
         <p className="setup__lede">
-          Three facts, and the rest is worked out: when the mission starts, how
-          many days it runs, and the most of each resource it may draw from end
-          to end. From those, every mission day, MD-01 to the last, gets an
-          allowance, and it is re-worked from what the meters actually say as
-          the mission goes on.
+          Set the start date, duration, and total budget for each resource.
+          ATLAS calculates a daily allowance and updates what remains as
+          sensor readings arrive.
         </p>
       </header>
 
