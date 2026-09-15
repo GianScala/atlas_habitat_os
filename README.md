@@ -10,7 +10,7 @@ mission plan.
 > “How much water did we use?” → “How does that compare with our plan?” →
 > “Which readings support that conclusion?”
 
-![Local Ministral comparing greenhouse and dormitory sensor readings](docs/images/atlas-ai-answer.png)
+![A local model answering a clean-water question with its source query visible](docs/images/atlas-chat.png)
 
 Built and maintained by [GianScala](https://github.com/GianScala).
 React + TypeScript frontend · FastAPI backend · local inference through Ollama ·
@@ -112,9 +112,9 @@ and context length affect response time and the questions it can handle well.
 
 ![ATLAS settings showing the local provider and installed model choices](docs/images/atlas-local-models.png)
 
-The room-comparison screenshot uses **Ministral 3 8B**; the water-query trace
-and model-selection screenshot use **Qwen 3.5 9B**. Both run through local Ollama
-against the synthetic demo habitat. Responses vary between runs and models.
+The water-query trace and the model-selection screenshot use **Qwen 3.5 9B**;
+every screenshot here runs through local Ollama against the synthetic demo
+habitat. Responses vary between runs and models.
 The same assistant workflow also supports Anthropic when a crew chooses cloud
 inference; that sends questions and retrieved context to Anthropic.
 
@@ -134,6 +134,8 @@ an exact daily figure, or a regular meter-entry routine.
 | Room analysis | Temperature, humidity, CO₂, and available power readings for selected rooms |
 | Mission plan | Telemetry compared with the crew's saved water and energy budgets |
 | Crew meter log | Consumption calculated from manual cumulative dial readings |
+
+![Room analysis showing temperature, humidity, and CO₂ per room over 24 hours](docs/images/atlas-room-analysis.png)
 
 In **Dashboard → Mission plan**, enter the start date, duration, and total
 resource budgets. ATLAS calculates daily allowances and revises the allowance

@@ -53,6 +53,7 @@ sections at readable size instead of shrinking a full page into one image.
 | `atlas-manual-daily.png` | Power, Day by day chart showing daytime and overnight use |
 | `atlas-manual-readings.png` | Power → The sheet → One day → MD-03 |
 | `atlas-water-log.png` | Water, overview showing the missing galley round |
+| `atlas-room-analysis.png` | Room analysis, 24 hours, all rooms, environment panels |
 
 The sample Greenhouse readings are 100 and 112 kWh on MD-03, then 117 kWh the
 next morning. The derived values are 12 kWh daytime, 5 kWh overnight, and
@@ -60,9 +61,10 @@ next morning. The derived values are 12 kWh daytime, 5 kWh overnight, and
 
 The seed data uses a rolling time window. These screenshots were captured on
 2026-09-15; regenerating the example changes calendar dates and live totals.
-The older chat and room-analysis images are retained separately from this
-consumption walkthrough. The AI screenshots below use the same synthetic
-telemetry, queried later on the capture day.
+The chat and room-analysis images were captured earlier than this consumption
+walkthrough and are reused in the README and the assistant guide. The AI
+screenshots below use the same synthetic telemetry, queried later on the
+capture day.
 
 
 ## Capture the AI assistant
@@ -75,9 +77,10 @@ database. No cloud model is used.
 Keep `CORS_ORIGINS` set to the exact preview origin above so the backend accepts
 chat and model-selection requests from the browser.
 
-### Room comparison — Ministral 3 8B
+### Room comparison — Ministral 3 8B (optional)
 
-Start a fresh chat with:
+This capture is not currently used in the docs; the assistant guide and README
+use `atlas-chat.png` instead. Start a fresh chat with:
 
 > Compare the latest temperature readings in the Greenhouse and Dormitory.
 > Check the sensor names first, give a short table with units and UTC timestamps,
@@ -106,7 +109,7 @@ answer. Model latency and response wording vary between runs.
 
 | Image | View and state |
 | --- | --- |
-| `atlas-ai-answer.png` | Completed room comparison, with local Ministral attribution |
+| `atlas-chat.png` | Completed clean-water answer with its Source panel expanded |
 | `atlas-ai-sources.png` | Qwen's expanded water discovery and tank-flow trace |
 | `atlas-local-models.png` | Local Ollama provider with Qwen selected and tool support visible |
 

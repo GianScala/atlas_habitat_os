@@ -63,7 +63,7 @@ You do not need to name a database field or write SQL. ATLAS provides the model
 with habitat names, units, available measurements, and tools for querying them.
 When a reading is unavailable, the useful answer is an explanation of the gap.
 
-![A local model comparing greenhouse and dormitory temperatures](images/atlas-ai-answer.png)
+![A local model answering a three-day clean-water question with its source query](images/atlas-chat.png)
 
 Continue in the same conversation to refine the result:
 
