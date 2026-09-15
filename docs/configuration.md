@@ -46,6 +46,9 @@ fallbacks from the environment.
 
 ## Models and optional voice
 
+For model selection, conversations, and source inspection, see the
+[AI assistant guide](assistant-guide.md).
+
 Local inference uses Ollama. Select `LLM_PROVIDER=anthropic` and provide
 `ANTHROPIC_API_KEY` to use the cloud provider. Leave `ANTHROPIC_MODEL` omitted
 for the application default, or set an available model ID. Cloud inference sends

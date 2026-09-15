@@ -24,6 +24,7 @@ SQLITE_PATH=/tmp/atlas-docs/telemetry.db \
 DATABASE_PATH=/tmp/atlas-docs/app.db \
 HABITAT_CONFIG=config/examples/demo_habitat.yaml \
 KNOWLEDGE_DIR=/tmp/atlas-docs/knowledge \
+CORS_ORIGINS=http://127.0.0.1:5181 \
 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8011
 ```
 
@@ -60,4 +61,55 @@ next morning. The derived values are 12 kWh daytime, 5 kWh overnight, and
 The seed data uses a rolling time window. These screenshots were captured on
 2026-09-15; regenerating the example changes calendar dates and live totals.
 The older chat and room-analysis images are retained separately from this
-consumption walkthrough.
+consumption walkthrough. The AI screenshots below use the same synthetic
+telemetry, queried later on the capture day.
+
+
+## Capture the AI assistant
+
+Start Ollama on the backend computer, then open **Settings → AI & models** and
+select an installed model with tool support. These examples use `ministral-3:8b`
+and `qwen3.5:9b` locally. Model selection is saved in the isolated application
+database. No cloud model is used.
+
+Keep `CORS_ORIGINS` set to the exact preview origin above so the backend accepts
+chat and model-selection requests from the browser.
+
+### Room comparison — Ministral 3 8B
+
+Start a fresh chat with:
+
+> Compare the latest temperature readings in the Greenhouse and Dormitory.
+> Check the sensor names first, give a short table with units and UTC timestamps,
+> and say which room is warmer.
+
+Wait for the answer to finish and verify its readings against the returned data.
+Capture the answer with its local model attribution. Expand Source for a view
+of the references accompanying that answer.
+
+### Water source analysis — Qwen 3.5 9B
+
+Select `qwen3.5:9b` and start another chat:
+
+> How much clean water did we use over the last 3 days? Check the available
+> water sensors first, then distinguish consumption from refills. Give a
+> concise daily table with units and sources.
+
+Expand **what ATLAS read** after completion. The screenshot focuses on the
+sensor discovery and successful clean/grey-water tool calls. Inspect the model's
+answer separately: in this capture its first table omitted a partial day,
+which is why the trace is useful evidence rather than proof that the answer is
+correct. Follow-ups can refine the presentation, but still require checking.
+
+Capture actual output; do not replace model text or tool results with a staged
+answer. Model latency and response wording vary between runs.
+
+| Image | View and state |
+| --- | --- |
+| `atlas-ai-answer.png` | Completed room comparison, with local Ministral attribution |
+| `atlas-ai-sources.png` | Qwen's expanded water discovery and tank-flow trace |
+| `atlas-local-models.png` | Local Ollama provider with Qwen selected and tool support visible |
+
+The SQLite demo reports descriptive query summaries rather than executable SQL.
+Keep the tool arguments visible alongside them. Relative windows move with the
+query time, so rerunning the same question later can produce different totals.

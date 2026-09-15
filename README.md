@@ -1,16 +1,163 @@
 # ATLAS
 
-Telemetry, mission budgets, and crew meter logs for analog space habitats.
+**Talk to your habitat. Track your mission.**
 
-ATLAS helps a crew answer three questions: **What did we use? Are we on plan?
-Where did it go?** Explore water and energy charts, compare daily consumption
-with a mission budget, or ask the assistant a question and inspect its sources.
+ATLAS is a local-first AI assistant and telemetry dashboard for analog space
+missions. Crew members can ask questions about their habitat in plain language,
+explore the readings behind an answer, and track water and energy against their
+mission plan.
 
-![Water consumption against today, cycle, and mission budgets](docs/images/atlas-mission-plan.png)
+> “How much water did we use?” → “How does that compare with our plan?” →
+> “Which readings support that conclusion?”
+
+![Local Ministral comparing greenhouse and dormitory sensor readings](docs/images/atlas-ai-answer.png)
 
 Built and maintained by [GianScala](https://github.com/GianScala).
-React + TypeScript frontend, FastAPI backend, and local models through Ollama.
-Anthropic is available as an optional cloud provider.
+React + TypeScript frontend · FastAPI backend · local inference through Ollama ·
+optional Anthropic cloud provider.
+
+## The problems we solve
+
+Habitat data is useful only if the crew can turn it into an answer in time.
+ATLAS brings together the measurements, the mission's targets, and the questions
+people need to ask during a shift.
+
+| Crew problem | What ATLAS provides |
+| --- | --- |
+| Answering a question requires knowing the database schema or writing a query | A conversational assistant that selects tools to read the habitat's data |
+| A chart shows a change, but the crew needs a comparison or explanation | Follow-up questions about time periods, rooms, consumption, and the mission plan |
+| A fluent AI answer is difficult to check | Visible tool activity and source references behind telemetry answers |
+| Consumption figures are disconnected from mission targets | Daily use compared with allowances for today, the current cycle, and the mission |
+| Handwritten sub-meter readings are hard to interpret | Manual readings converted into daytime/overnight use and shares by room or tap |
+| Cloud access is unavailable or unsuitable for habitat context | Local inference on a habitat computer using installed Ollama models |
+
+## Two ways to work with your habitat
+
+**The dashboard gives you a regular view of the mission. The assistant lets you
+investigate a question.** They use the same backend tools and calculations, but
+serve different parts of the crew's workflow.
+
+| | Track and monitor | Ask and investigate |
+| --- | --- | --- |
+| Start with | A chart, a date range, or a mission day | A question in your own words |
+| Useful for | Daily checks, budget reviews, and recording meter rounds | Comparisons, explanations, and follow-up analysis |
+| Result | Charts, tables, allowances, and coverage indicators | A streamed answer with tool activity and available sources |
+| Needs an AI model? | No | Yes: local Ollama or the optional cloud provider |
+
+### 1. Talk to the habitat
+
+Ask ATLAS about current conditions, resource use, or the crew's saved plan. It
+can look up readings, request summaries, and explain the returned results in a
+form the crew can use: a short answer, a daily table, or a more detailed comparison.
+You can continue in the same conversation to narrow the question or ask for the
+evidence behind a conclusion.
+
+| Example question | What it helps you understand |
+| --- | --- |
+| “What are the latest conditions in the greenhouse?” | The available room readings, their units, and timestamps |
+| “How much clean water did we use over the last three days?” | Consumption by period, distinguished from tank refills |
+| “How does our water use compare with the mission plan?” | Recorded spending, the crew's targets, and the allowance ahead |
+| “From our manual log, which room used the most energy?” | Consumption derived from crew readings, with its coverage limits |
+| “Break that down by day and tell me which readings are missing.” | A more specific follow-up without starting the conversation over |
+
+These are questions to try, not prewritten reports. What ATLAS can answer
+depends on the connected sensors, saved plan, manual readings, and selected
+model. It can describe patterns supported by those records; a pattern alone
+does not establish a physical cause such as a leak or equipment fault.
+
+#### From question to evidence
+
+```text
+Crew question → local model chooses a tool → ATLAS reads the data
+              ← model explains the result ← calculations and source references
+```
+
+1. **Understand the question.** The model receives the conversation and the
+   habitat context: available measurements, names, units, and saved plan details.
+2. **Retrieve the relevant records.** It requests tools for readings, history,
+   consumption, mission tracking, or the crew meter log. ATLAS validates and
+   executes those requests; the model does not write arbitrary database queries.
+3. **Explain the result.** The model uses the returned figures to answer and may
+   request more information before finishing. Consumption arithmetic is handled
+   in backend code.
+4. **Let the crew inspect it.** Expand **what ATLAS read** for the tool calls and
+   their outcomes, and **Source** for the references returned by those tools.
+
+![Qwen water-analysis trace showing sensor discovery and tank-flow queries](docs/images/atlas-ai-sources.png)
+
+The trace shows what was requested and whether it returned data. The Source
+panel shows the query text or query summary returned by the adapter. The SQLite
+demo uses descriptive summaries, not executable SQL; use the trace to inspect
+the requested sensor and filters. Manual meter logs and attached documents
+have their own provenance. Source visibility makes an answer reviewable, but does not guarantee
+that the model interpreted it correctly.
+
+#### Run the AI inside the habitat
+
+**Ollama runs the model on the configured computer.** In the default local setup,
+the question, conversation history, and retrieved habitat context are processed
+on that machine rather than sent to a cloud model. There is no cloud API key
+required for local chat.
+
+Once the runtime and model files are installed, local chat can work without
+internet access, provided the habitat database and any other required local
+services remain reachable. Downloading models needs connectivity; inference
+uses the installed files. If you configure a remote Ollama host, that host
+receives the context instead.
+
+In **Settings → AI & models**, you can see the active provider, browse installed
+models, download models, and choose which one answers. Pick a model with **tool
+support**: ATLAS needs it to request real readings. Model size, available memory,
+and context length affect response time and the questions it can handle well.
+
+![ATLAS settings showing the local provider and installed model choices](docs/images/atlas-local-models.png)
+
+The room-comparison screenshot uses **Ministral 3 8B**; the water-query trace
+and model-selection screenshot use **Qwen 3.5 9B**. Both run through local Ollama
+against the synthetic demo habitat. Responses vary between runs and models.
+The same assistant workflow also supports Anthropic when a crew chooses cloud
+inference; that sends questions and retrieved context to Anthropic.
+
+Optional local voice tools let crew members dictate a question and listen to
+the answer. Attached procedures and reference documents can also be searched
+when configured under **Settings → Connectors**. See the
+[AI assistant guide](docs/assistant-guide.md) for setup, follow-ups, and reading sources.
+
+### 2. Track consumption and the mission plan
+
+The dashboard works independently of the AI. Use it for a quick status check,
+an exact daily figure, or a regular meter-entry routine.
+
+| View | What it shows |
+| --- | --- |
+| Habitat consumption | Whole-habitat water use, tank levels, power draw, and energy consumption |
+| Room analysis | Temperature, humidity, CO₂, and available power readings for selected rooms |
+| Mission plan | Telemetry compared with the crew's saved water and energy budgets |
+| Crew meter log | Consumption calculated from manual cumulative dial readings |
+
+In **Dashboard → Mission plan**, enter the start date, duration, and total
+resource budgets. ATLAS calculates daily allowances and revises the allowance
+for the days ahead as recorded consumption comes in. Planned extras reserve
+budget for activities such as experiments or cleaning.
+
+![Daily water use compared with the original and revised mission allowances](docs/images/atlas-daily-consumption.png)
+
+Expand **Every day** for exact values. Missing telemetry remains a gap;
+today's use is still in progress. The mission's day boundary can differ from
+a rolling dashboard window, so compare matching periods when checking a chat
+answer against a chart.
+
+For manual readings, open **Habitat consumption → Crew meter log → The sheet**.
+Enter the cumulative value on each dial. For example, **100 → 112 → 117 kWh**
+across morning, evening, and the next morning produces **12 kWh daytime**,
+**5 kWh overnight**, and **17 kWh for the day**.
+
+![Manual dial readings with calculated daytime, overnight, and full-day use](docs/images/atlas-manual-readings.png)
+
+The assistant can query the manual log too, but these records stay separate
+from telemetry: they do not fill sensor gaps or change Mission plan's measured
+consumption. See the [consumption guide](docs/consumption-guide.md) for daily
+tables, room/tap breakdowns, missing rounds, and the comparison with habitat meters.
 
 ## Quick start
 
@@ -44,51 +191,6 @@ The demo contains 30 days of synthetic sensor readings. Mission plans and manual
 readings start empty; follow the [consumption guide](docs/consumption-guide.md)
 to add them. The seeder preserves an existing database; use `--force` only to
 replace that synthetic telemetry with a fresh rolling window.
-
-## How it works
-
-| View | Use it to | Data source |
-| --- | --- | --- |
-| Habitat consumption | Inspect water use, tank levels, and energy over a selected time range | Habitat telemetry |
-| Room analysis | Compare temperature, humidity, CO₂, and power draw across rooms | Room sensors |
-| Mission plan | Compare daily use with allowances for today, a three-day cycle, and the whole mission | Telemetry + the crew's saved plan |
-| Crew meter log | Break down consumption by room or tap, from morning and evening readings | Manually entered cumulative meter readings |
-| Chat | Ask questions and inspect the queries behind the answer | Tools that read telemetry, mission information, and configured context |
-
-### See daily use against your plan
-
-In **Dashboard → Mission plan**, enter the start date, duration, and total water
-and energy budgets. ATLAS calculates daily allowances and updates the remaining
-allowance as consumption comes in. Add planned extras for activities such as
-experiments or cleaning; these reserve part of the existing budget.
-
-The **Day by day** chart shows recorded use, the original allowance, and the
-revised allowance for the days ahead. Expand **Every day** for exact numbers.
-Missing readings remain gaps; today's consumption is still in progress.
-
-![Exact daily consumption and allowances in the mission table](docs/images/atlas-daily-plan.png)
-
-### Turn manual readings into consumption
-
-Open **Crew meter log** from Habitat consumption, choose power or water, then
-expand **The sheet**. Enter the number on each dial, not the amount used.
-ATLAS subtracts successive readings to calculate daytime and overnight use.
-
-For example, power readings of **100 → 112 → 117 kWh** mean **12 kWh daytime**,
-**5 kWh overnight**, and **17 kWh for the full day**. The third reading is the
-following morning. Without it, the overnight interval is still open.
-
-![Manual dial readings alongside calculated daytime and overnight consumption](docs/images/atlas-manual-readings.png)
-
-The log shows daily totals and shares by room or tap. Its comparison with
-telemetry helps you investigate differences. Manual readings are kept separate:
-they do not fill telemetry gaps or change the consumption shown in Mission plan.
-
-![Crew meter log showing how recorded energy use is distributed](docs/images/atlas-crew-log.png)
-
-See the [step-by-step consumption guide](docs/consumption-guide.md) for units,
-incomplete rounds, and interpreting the comparison. All consumption screenshots
-use an isolated synthetic demo; figures vary with the capture date.
 
 ## Connect your habitat
 
@@ -155,6 +257,7 @@ See [security and privacy](SECURITY.md) and [release status](docs/release-readin
 
 ## Documentation
 
+- [AI assistant guide](docs/assistant-guide.md) — local models, conversations, tools, and sources
 - [Consumption guide](docs/consumption-guide.md) — plans, daily totals, and manual readings
 - [Configuration](docs/configuration.md) — telemetry, profiles, models, and environment variables
 - [Backend](atlas_backend/README.md) · [Frontend](atlas_frontend/README.md) — developer setup and architecture

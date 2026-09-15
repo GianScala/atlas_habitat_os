@@ -68,6 +68,37 @@ Tools for tanks and phased electrical meters depend on profile configuration.
 
 See [adapter development](../README.md#writing-a-new-data-source-adapter).
 
+## The AI assistant
+
+`services/agent.py` runs a tool-use loop for each chat turn:
+
+1. Append the crew question to the stored conversation.
+2. Build the system context from the habitat profile, available measurements,
+   mission brief, and assistant preferences.
+3. Ask the selected provider for a streamed turn with the available tool schemas.
+4. Execute requested tools through `tools/registry.py`, then return their results
+   to the model. Repeat when it requests more data, up to `MAX_TOOL_ROUNDS`.
+5. Stream the answer and collect executed telemetry queries for its Source panel.
+
+Ollama and Anthropic implement the same provider interface. Ollama sends the
+context to `OLLAMA_HOST`, which defaults to loopback on the backend computer.
+Anthropic sends it to the cloud. Model selection is stored in the application
+database; changing providers does not change the telemetry adapter.
+
+The model selects and interprets tools; backend functions validate requests,
+read records, and calculate usage. The tool set includes sensor discovery,
+latest/history queries, aggregation, tank flow, mission tracking, and the crew
+meter log. Habitat-dependent tools are offered only when configured. Document
+search is offered when files are connected.
+
+Keep source types explicit in tool responses. `get_crew_meter_log` returns
+manual-reading provenance rather than a fabricated telemetry query.
+`search_knowledge` returns passages and document references. Successful telemetry
+queries are collected separately from the model's answer text.
+
+For user-facing setup and examples, see the
+[AI assistant guide](../docs/assistant-guide.md).
+
 ## Consumption calculations
 
 | Reading type | Tool | Calculation |
