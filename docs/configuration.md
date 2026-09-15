@@ -19,7 +19,7 @@ cp .env.example .env
 The template selects SQLite and `config/examples/demo_habitat.yaml`. The seed
 command creates `config/examples/demo_habitat.db`; the database is not shipped
 or generated automatically at startup. Start Ollama and install a model from
-the Models page for chat. Telemetry views do not require a language model.
+Settings → AI & models for chat. Telemetry views do not require a language model.
 
 ## Use your own telemetry
 

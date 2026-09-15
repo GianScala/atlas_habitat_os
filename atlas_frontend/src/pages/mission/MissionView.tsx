@@ -87,13 +87,11 @@ export function MissionView() {
           <Warning size={15} />
           <div>
             <p className="mission__banner-title">
-              A mission plan is still to be added
+              Add a mission plan to track your budget
             </p>
             <p className="mission__banner-text">
-              Nothing on this page can say whether consumption is on plan until
-              there is a plan. ATLAS says the same when asked: it reports
-              what the habitat drew, and refuses to compare it against a target
-              nobody set.
+              Set your mission dates and resource budgets below to compare daily
+              consumption with your plan.
             </p>
           </div>
         </div>
@@ -191,7 +189,7 @@ export function MissionView() {
           <Warning size={15} />
           <div>
             <p className="mission__banner-title">
-              These ceilings are ours, not yours
+              Review the suggested budgets
             </p>
             <p className="mission__banner-text">{tracking.default_note}</p>
           </div>
@@ -364,9 +362,8 @@ function ResourceSection({
                 </span>
               </div>
               <p className="card__subtitle">
-                {resource.label} {resource.noun}, one bar per mission day
-                against the day's allowance. A day the sensors did not cover has
-                no bar. That is a gap in the record, not a day of none.
+                Daily {resource.label.toLowerCase()} use compared with your allowance.
+                Missing sensor data leaves a gap; today is still in progress.
                 {resource.total !== null && (
                   <>
                     {' '}
@@ -391,8 +388,7 @@ function ResourceSection({
               <ChevronRight className="panel__chevron" />
               <span className="panel__label">Every day</span>
               <span className="panel__hint">
-                the same figures as the chart, as a table you can read a number
-                off
+                exact daily use, planned allowance, and revised allowance
               </span>
             </summary>
             <div className="panel__body">
@@ -419,8 +415,7 @@ function ResourceSection({
                 <ChevronRight className="panel__chevron" />
                 <span className="panel__label">Source</span>
                 <span className="panel__hint">
-                  {resource.measurement}.{resource.field}, every measured
-                  figure above is read from this one query
+                  {resource.measurement}.{resource.field}, the query behind these consumption figures
                 </span>
               </summary>
               <div className="panel__body">

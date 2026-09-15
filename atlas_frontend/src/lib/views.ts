@@ -40,7 +40,7 @@ export const VIEWS: readonly ViewOption[] = [
   {
     key: 'habitat',
     label: 'Habitat consumption',
-    blurb: 'Water and power for the habitat as a whole — one meter, no room split',
+    blurb: 'Water and energy use across the habitat',
   },
   {
     key: 'rooms',
@@ -50,7 +50,7 @@ export const VIEWS: readonly ViewOption[] = [
   {
     key: 'mission',
     label: 'Mission plan',
-    blurb: 'Water and power against the mission plan — today, this cycle, the whole mission',
+    blurb: 'Daily water and energy use compared with your mission budget',
   },
 ] as const
 

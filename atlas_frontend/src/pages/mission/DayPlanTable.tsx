@@ -55,8 +55,7 @@ export function DayPlanTable({ days, unit }: DayPlanTableProps) {
       <div className="dayplan__scroll">
         <table className="dayplan__table">
           <caption className="dayplan__caption">
-            Every mission day: what it was allowed, what it took, and what it is
-            allowed now.
+            Daily consumption, original allowances, and revised allowances.
           </caption>
           <thead>
             <tr>
@@ -96,7 +95,7 @@ export function DayPlanTable({ days, unit }: DayPlanTableProps) {
                     day.actual !== null
                       ? undefined
                       : day.queried
-                        ? 'The sensors did not cover this day. It is not a day of none.'
+                        ? 'No sensor data for this day; consumption is unknown.'
                         : 'Older than the window the meters were asked about.'
                   }
                 >
