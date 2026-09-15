@@ -89,6 +89,27 @@ Chat arrives as server-sent events. `useChat` and the live-turn helpers assemble
 messages; components render the answer, tool activity, and sources. Keep
 `lib/types.ts` aligned with the backend schemas whenever the API changes.
 
+## Presenting the AI conversation
+
+The chat UI shows the crew question, the streamed model answer, and its evidence
+as separate elements:
+
+- `ToolTrace` shows what was requested and whether it returned data. It opens
+  during the turn and can be expanded after the answer.
+- `SourceFooter` lists the source references returned by the backend. Preserve
+  the adapter's text: this may be a query summary rather than executable SQL.
+- `ThinkingTrace` presents optional model-provided thinking separately from
+  tool activity; it is not a data source.
+- The live start event identifies the provider and model used for that turn.
+  Settings controls which provider handles subsequent questions.
+
+Do not imply that every answer came from a sensor query. Manual-log results and
+document passages carry different provenance. The transcript should let a crew
+member distinguish an interpretation from the records that support it.
+
+See the [AI assistant guide](../docs/assistant-guide.md) for the user workflow
+and the [backend README](../atlas_backend/README.md#the-ai-assistant) for the tool loop.
+
 ## Styling
 
 Start at `styles/index.css` for cascade order. Shared sizes and spacing live in
